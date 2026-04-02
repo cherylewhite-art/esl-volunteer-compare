@@ -4,7 +4,7 @@
 const programs = [
   { slug: "ivhq-esl-vietnam",        url: "https://www.volunteerhq.org/destinations/vietnam/teaching-english-in-ho-chi-minh/" },
   { slug: "gvi-vietnam-teaching",    url: "https://people.gvi.co.uk/programs/volunteer-with-children-and-teach-english-in-vietnam/" },
-  { slug: "love-volunteers-vietnam", url: "https://www.lovevolunteers.org/destinations/volunteer-vietnam/teaching-english-hanoi" },
+  { slug: "love-volunteers-vietnam", url: "https://www.lovevolunteers.org/destinations/volunteer-vietnam/teaching-english-ho-chi-minh-city" },
   { slug: "ivhq-esl-thailand",       url: "https://www.volunteerhq.org/destinations/thailand/teaching-in-chiang-mai/" },
   { slug: "ivhq-esl-thailand-hua-hin", url: "https://www.volunteerhq.org/destinations/thailand/teaching-english-in-hua-hin/" },
   { slug: "ivhq-esl-nepal",          url: "https://www.volunteerhq.org/destinations/nepal/teaching-english/" },
