@@ -1,0 +1,45 @@
+name: Weekly Link Checker
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"   # Every Monday at 9:00 AM UTC
+  workflow_dispatch:        # Also allows manual runs from GitHub
+
+jobs:
+  check-links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run link checker
+        id: linkcheck
+        run: node scripts/check-links.mjs
+        continue-on-error: true
+
+      - name: Send email if links are broken
+        if: steps.linkcheck.outcome == 'failure'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          to: cherylewhite@gmail.com
+          from: ESL Volunteer Finder <${{ secrets.MAIL_USERNAME }}>
+          subject: "Action needed: broken program links detected"
+          body: |
+            One or more ESL program links on ESLVolunteerFinder.com returned an error this week.
+
+            Go to the Actions tab on GitHub to see which links failed:
+            https://github.com/cherylewhite-art/esl-volunteer-compare/actions
+
+            Update src/data/index.ts with the correct URLs and redeploy.
+
+      - name: Fail the workflow if links are broken
+        if: steps.linkcheck.outcome == 'failure'
+        run: exit 1
