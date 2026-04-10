@@ -1,6 +1,5 @@
 {
-  "installCommand": "pnpm install",
-  "buildCommand": "pnpm run build:ssg",
+  "buildCommand": "npm run build:ssg",
   "outputDirectory": "dist/public",
   "cleanUrls": true,
   "trailingSlash": false
