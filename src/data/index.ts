@@ -263,7 +263,7 @@ export const providers: Provider[] = [
     summary:
       "International Volunteer HQ (IVHQ) is one of the world's largest and most affordable volunteer travel organizations, operating since 2007. They offer structured ESL programs in dozens of countries with a strong track record of in-country support. IVHQ is known for transparent pricing and a straightforward application process.",
     countriesOffered: ["Vietnam", "Nepal", "Ghana", "Peru", "Thailand"],
-    typicalWeeklyCostRange: "$160–$250/week",
+    typicalWeeklyCostRange: "$160–$265/week",
     minDurationRange: "1–2 weeks",
     housingStatus: "Yes",
     pros: [
@@ -314,7 +314,7 @@ export const providers: Provider[] = [
     housingStatus: "Yes",
     pros: [
       "Strong emphasis on sustainable, community-led impact",
-      "Well-organised base camps with good facilities",
+      "Well-organized base camps with good facilities",
       "Aligned with UN Sustainable Development Goals",
       "Regular skills training for volunteers",
     ],

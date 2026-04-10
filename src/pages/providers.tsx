@@ -62,7 +62,7 @@ export default function Providers() {
         <section>
           <h2 className="text-2xl font-bold text-foreground mb-2">IVHQ vs Projects Abroad</h2>
           <p className="text-muted-foreground text-sm mb-6 max-w-2xl">
-            The two most-searched ESL volunteer providers compared side by side. Both are established organisations with strong in-country support — the main differences are cost, structure, and who each suits best.
+            The two most-searched ESL volunteer providers compared side by side. Both are established organizations with strong in-country support — the main differences are cost, structure, and who each suits best.
           </p>
           <div className="overflow-x-auto rounded-lg border border-border bg-white">
             <table className="w-full text-sm">
@@ -75,7 +75,7 @@ export default function Providers() {
               </thead>
               <tbody>
                 {[
-                  { label: "Typical weekly cost", ivhq: "$160–$250/week", pa: "$300–$450/week" },
+                  { label: "Typical weekly cost", ivhq: "$160–$265/week", pa: "$300–$450/week" },
                   { label: "Minimum stay", ivhq: "1–2 weeks", pa: "2–4 weeks" },
                   { label: "Countries (ESL)", ivhq: "Vietnam, Thailand, Nepal, Ghana, Peru", pa: "Vietnam, Peru" },
                   { label: "Housing included", ivhq: "Yes", pa: "Yes" },
