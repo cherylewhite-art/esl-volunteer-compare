@@ -8,8 +8,9 @@ import { FaqAccordion } from "@/components/faq-accordion";
 import {
   Country,
   Program,
-  providers,
   getProviderBySlug,
+  formatCost,
+  formatDuration,
 } from "@/data";
 
 interface CountryPageProps {
@@ -18,12 +19,20 @@ interface CountryPageProps {
 }
 
 export function CountryPage({ country, programs }: CountryPageProps) {
-  const relatedProviders = Array.from(
-    new Set(programs.map((p) => p.providerSlug))
-  )
-    .map((slug) => getProviderBySlug(slug))
-    .filter(Boolean)
-    .slice(0, 2);
+  // All providers that operate in this country, with per-provider stats
+  const providerSlugs = Array.from(new Set(programs.map((p) => p.providerSlug)));
+  const providerCards = providerSlugs
+    .map((slug) => {
+      const provider = getProviderBySlug(slug);
+      const providerPrograms = programs.filter((p) => p.providerSlug === slug);
+      const costs = providerPrograms.map((p) => p.weeklyCostUsd ?? 0).filter((c) => c > 0);
+      const minCost = costs.length ? Math.min(...costs) : null;
+      const maxCost = costs.length ? Math.max(...costs) : null;
+      const minDuration = Math.min(...providerPrograms.map((p) => p.minDurationWeeks));
+      const mealsIncluded = providerPrograms.some((p) => p.mealsIncluded);
+      return { provider, minCost, maxCost, minDuration, mealsIncluded };
+    })
+    .filter((r) => r.provider != null);
 
   return (
     <Layout
@@ -99,34 +108,71 @@ export function CountryPage({ country, programs }: CountryPageProps) {
           <FaqAccordion faqs={country.faqs} />
         </section>
 
-        {/* Internal Links */}
-        <section className="border-t border-border pt-10">
-          <h2 className="text-base font-semibold text-foreground mb-4">Related Links</h2>
-          <div className="flex flex-col sm:flex-row gap-4 flex-wrap">
-            {relatedProviders.map((provider) => (
-              <Link
-                key={provider!.slug}
-                href={`/program/${provider!.slug}`}
-                className="inline-flex items-center gap-2 text-sm text-primary font-medium hover:underline"
-              >
-                <ArrowRight className="h-3.5 w-3.5" />
-                {provider!.name} — Program Details
-              </Link>
-            ))}
+        {/* Next Steps */}
+        <section className="border-t border-border pt-10 space-y-8">
+          {/* Provider cards */}
+          <div>
+            <h2 className="text-base font-semibold text-foreground mb-4">
+              Providers operating in {country.name}
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {providerCards.map(({ provider, minCost, maxCost, minDuration, mealsIncluded }) => (
+                <Link
+                  key={provider!.slug}
+                  href={`/program/${provider!.slug}`}
+                  className="group flex flex-col p-4 bg-white border border-border rounded-lg hover:border-primary/40 hover:shadow-sm transition-all"
+                >
+                  <div className="font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
+                    {provider!.name}
+                  </div>
+                  <div className="text-sm text-muted-foreground mb-3 line-clamp-2">{provider!.summary.split(".")[0]}.</div>
+                  <div className="flex flex-wrap gap-2 mt-auto">
+                    <span className="text-xs bg-muted/60 text-muted-foreground px-2 py-0.5 rounded-full">
+                      {minCost === maxCost || maxCost === null
+                        ? `$${minCost}/wk`
+                        : `$${minCost}–$${maxCost}/wk`}
+                    </span>
+                    <span className="text-xs bg-muted/60 text-muted-foreground px-2 py-0.5 rounded-full">
+                      {minDuration === 1 ? "1-week min" : `${minDuration}-week min`}
+                    </span>
+                    {mealsIncluded && (
+                      <span className="text-xs bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded-full">
+                        Meals included
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-1 text-xs text-primary font-medium mt-3">
+                    View full provider details <ArrowRight className="h-3 w-3" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Cost guide CTA */}
+          <div className="bg-muted/30 border border-border rounded-lg p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <p className="font-semibold text-foreground text-sm mb-1">Not sure what to budget?</p>
+              <p className="text-sm text-muted-foreground">
+                See worked 4-week cost examples for every destination — including spending money and flights.
+              </p>
+            </div>
             <Link
               href="/cost-guide"
-              className="inline-flex items-center gap-2 text-sm text-primary font-medium hover:underline"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-primary whitespace-nowrap hover:underline shrink-0"
             >
-              <ArrowRight className="h-3.5 w-3.5" />
-              The True Cost of Volunteer Programs
+              Read the Cost Guide <ArrowRight className="h-3.5 w-3.5" />
             </Link>
-            <Link
-              href="/countries"
-              className="inline-flex items-center gap-2 text-sm text-primary font-medium hover:underline"
-            >
-              <ArrowRight className="h-3.5 w-3.5" />
-              Compare other countries
-            </Link>
+          </div>
+
+          {/* Other countries */}
+          <div>
+            <p className="text-sm font-medium text-muted-foreground mb-3">Compare other destinations</p>
+            <div className="flex flex-wrap gap-2">
+              <Link href="/countries" className="inline-flex items-center gap-1.5 text-sm text-primary font-medium hover:underline">
+                <ArrowRight className="h-3.5 w-3.5" /> All countries
+              </Link>
+            </div>
           </div>
         </section>
       </div>

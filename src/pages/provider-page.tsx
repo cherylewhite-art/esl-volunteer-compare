@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   Provider,
   Program,
+  providers as allProviders,
   formatCost,
   formatDuration,
   getCountryBySlug,
@@ -172,29 +173,67 @@ export function ProviderPage({ provider, programs }: ProviderPageProps) {
               </Button>
             </section>
 
-            {/* Internal links */}
-            <section className="border-t border-border pt-8">
-              <h2 className="text-base font-semibold text-foreground mb-4">Related Country Pages</h2>
-              <div className="flex flex-col gap-2">
-                {countrySlugsInPrograms.map((slug) => {
-                  const country = getCountryBySlug(slug);
-                  return country ? (
-                    <Link
-                      key={slug}
-                      href={`/volunteer-teach-english-${slug}`}
-                      className="inline-flex items-center gap-2 text-sm text-primary font-medium hover:underline"
-                    >
-                      <ArrowRight className="h-3.5 w-3.5" />
-                      Volunteer Teaching English in {country.name}
-                    </Link>
-                  ) : null;
-                })}
+            {/* Next Steps */}
+            <section className="border-t border-border pt-8 space-y-8">
+              {/* Country links */}
+              <div>
+                <h2 className="text-base font-semibold text-foreground mb-3">
+                  {provider.name} programs by country
+                </h2>
+                <div className="flex flex-col gap-2">
+                  {countrySlugsInPrograms.map((slug) => {
+                    const country = getCountryBySlug(slug);
+                    return country ? (
+                      <Link
+                        key={slug}
+                        href={`/volunteer-teach-english-${slug}`}
+                        className="inline-flex items-center gap-2 text-sm text-primary font-medium hover:underline"
+                      >
+                        <ArrowRight className="h-3.5 w-3.5" />
+                        {getFlagEmoji(slug)} Volunteer Teaching English in {country.name}
+                      </Link>
+                    ) : null;
+                  })}
+                </div>
+              </div>
+
+              {/* Compare other providers */}
+              <div>
+                <h2 className="text-base font-semibold text-foreground mb-3">Compare other providers</h2>
+                <div className="flex flex-col gap-2">
+                  {allProviders
+                    .filter((p) => p.slug !== provider.slug)
+                    .map((p) => (
+                      <Link
+                        key={p.slug}
+                        href={`/program/${p.slug}`}
+                        className="flex items-center justify-between gap-4 px-4 py-3 rounded-lg border border-border hover:border-primary/40 hover:bg-muted/20 transition-all group"
+                      >
+                        <div>
+                          <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                            {p.name}
+                          </span>
+                          <span className="text-xs text-muted-foreground ml-2">{p.typicalWeeklyCostRange}</span>
+                        </div>
+                        <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary shrink-0 transition-colors" />
+                      </Link>
+                    ))}
+                </div>
+              </div>
+
+              {/* Cost guide CTA */}
+              <div className="bg-muted/30 border border-border rounded-lg p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <p className="font-semibold text-foreground text-sm mb-1">Comparing program costs?</p>
+                  <p className="text-sm text-muted-foreground">
+                    See worked 4-week cost examples for every destination, including spending money and flights.
+                  </p>
+                </div>
                 <Link
                   href="/cost-guide"
-                  className="inline-flex items-center gap-2 text-sm text-primary font-medium hover:underline"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-primary whitespace-nowrap hover:underline shrink-0"
                 >
-                  <ArrowRight className="h-3.5 w-3.5" />
-                  The True Cost of Volunteer Programs
+                  Read the Cost Guide <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
             </section>
