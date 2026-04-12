@@ -6,7 +6,7 @@ import { ArrowRight, CheckCircle } from "lucide-react";
 // Formspree endpoint — sign up at formspree.io, create a form pointed at
 // update@eslvolunteerfinder.com, then replace this placeholder with your
 // endpoint ID (e.g. https://formspree.io/f/abcdefgh).
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/REPLACE_WITH_YOUR_ENDPOINT";
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/xjgjbppj";
 
 export default function About() {
   const [submitted, setSubmitted] = useState(false);
