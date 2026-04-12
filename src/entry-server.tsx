@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { Switch, Route, Router } from "wouter";
 import { HelmetProvider } from "react-helmet-async";
 import { countries, providers, getProgramsByCountry } from "./data";
+export { countries } from "./data";
 
 import Home from "./pages/home";
 import Vietnam from "./pages/vietnam";

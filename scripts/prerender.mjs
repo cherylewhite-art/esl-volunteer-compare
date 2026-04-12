@@ -7,7 +7,7 @@ const projectRoot = resolve(__dirname, "..");
 const distDir = resolve(projectRoot, "dist/public");
 const serverBundle = resolve(projectRoot, "dist/server/entry-server.js");
 
-const { render, routeMetadata } = await import(pathToFileURL(serverBundle).href);
+const { render, routeMetadata, countries } = await import(pathToFileURL(serverBundle).href);
 
 const routes = [
   "/",
@@ -51,6 +51,24 @@ for (const route of routes) {
 
     if (!meta) throw new Error(`No metadata found for route: ${route}`);
 
+    // Build FAQ schema for country pages
+    const countrySlug = route.match(/^\/volunteer-teach-english-(.+)$/)?.[1];
+    const countryData = countrySlug ? countries.find((c) => c.slug === countrySlug) : null;
+    const FAQ_JSON = countryData
+      ? JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": countryData.faqs.map((faq) => ({
+            "@type": "Question",
+            "name": faq.question,
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": faq.answer,
+            },
+          })),
+        })
+      : null;
+
     // Build the head tags for this page
     const headTags = [
       `<title>${meta.title}</title>`,
@@ -66,6 +84,7 @@ for (const route of routes) {
       `<meta name="twitter:description" content="${meta.description}"/>`,
       `<meta name="twitter:image" content="${OG_IMAGE}"/>`,
       `<script type="application/ld+json">${LD_JSON}</script>`,
+      ...(FAQ_JSON ? [`<script type="application/ld+json">${FAQ_JSON}</script>`] : []),
     ].join("\n    ");
 
     // Strip any head tags that react-helmet-async renders inline in the body
