@@ -30,6 +30,7 @@ export interface Program {
   websiteUrl: string;
   applicationUrl: string | null;
   contactEmail: string | null;
+  lastVerified: string;
 }
 
 export interface Country {
@@ -412,6 +413,7 @@ export const programs: Program[] = [
     websiteUrl: "https://www.volunteerhq.org/destinations/vietnam/teaching-english-in-ho-chi-minh/",
     applicationUrl: "https://www.volunteerhq.org/destinations/vietnam/teaching-english-in-ho-chi-minh/",
     contactEmail: null,
+    lastVerified: "April 2026",
   },
   {
     slug: "gvi-vietnam-teaching",
@@ -448,6 +450,7 @@ export const programs: Program[] = [
     websiteUrl: "https://people.gvi.co.uk/programs/volunteer-with-children-and-teach-english-in-vietnam/",
     applicationUrl: null,
     contactEmail: null,
+    lastVerified: "April 2026",
   },
   {
     slug: "love-volunteers-vietnam",
@@ -483,6 +486,7 @@ export const programs: Program[] = [
     websiteUrl: "https://www.lovevolunteers.org/destinations/volunteer-vietnam/teaching-english-ho-chi-minh-city",
     applicationUrl: null,
     contactEmail: null,
+    lastVerified: "April 2026",
   },
   // ---- THAILAND ----
   {
@@ -519,6 +523,7 @@ export const programs: Program[] = [
     websiteUrl: "https://www.volunteerhq.org/destinations/thailand/teaching-in-chiang-mai/",
     applicationUrl: "https://www.volunteerhq.org/destinations/thailand/teaching-in-chiang-mai/",
     contactEmail: null,
+    lastVerified: "April 2026",
   },
   {
     slug: "ivhq-esl-thailand-hua-hin",
@@ -554,6 +559,7 @@ export const programs: Program[] = [
     websiteUrl: "https://www.volunteerhq.org/destinations/thailand/teaching-english-in-hua-hin/",
     applicationUrl: "https://www.volunteerhq.org/destinations/thailand/teaching-english-in-hua-hin/",
     contactEmail: null,
+    lastVerified: "April 2026",
   },
   // ---- NEPAL ----
   {
@@ -590,6 +596,7 @@ export const programs: Program[] = [
     websiteUrl: "https://www.volunteerhq.org/destinations/nepal/teaching-english/",
     applicationUrl: null,
     contactEmail: null,
+    lastVerified: "April 2026",
   },
   {
     slug: "love-volunteers-nepal",
@@ -625,6 +632,7 @@ export const programs: Program[] = [
     websiteUrl: "https://www.lovevolunteers.org/destinations/volunteer-nepal/teaching-monasteries-pokhara",
     applicationUrl: null,
     contactEmail: null,
+    lastVerified: "April 2026",
   },
   // ---- GHANA ----
   {
@@ -661,6 +669,7 @@ export const programs: Program[] = [
     websiteUrl: "https://www.volunteerhq.org/destinations/ghana/teaching-english/",
     applicationUrl: null,
     contactEmail: null,
+    lastVerified: "April 2026",
   },
   {
     slug: "world-volunteers-ghana",
@@ -696,6 +705,7 @@ export const programs: Program[] = [
     websiteUrl: "https://www.worldvolunteers.org",
     applicationUrl: null,
     contactEmail: null,
+    lastVerified: "April 2026",
   },
   // ---- PERU ----
   {
@@ -732,6 +742,7 @@ export const programs: Program[] = [
     websiteUrl: "https://www.volunteerhq.org/destinations/peru/teaching-english-in-cusco/",
     applicationUrl: null,
     contactEmail: null,
+    lastVerified: "April 2026",
   },
   {
     slug: "projects-abroad-peru",
@@ -767,6 +778,7 @@ export const programs: Program[] = [
     websiteUrl: "https://www.projects-abroad.org/projects/volunteer-teaching-peru/",
     applicationUrl: null,
     contactEmail: null,
+    lastVerified: "April 2026",
   },
 ];
 

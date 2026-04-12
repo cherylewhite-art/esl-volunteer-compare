@@ -34,6 +34,7 @@ export function ComparisonTable({ programs }: ComparisonTableProps) {
               <td className="px-4 py-4">
                 <div className="font-medium text-foreground leading-snug">{getProviderName(program.providerSlug)}</div>
                 <div className="text-xs text-muted-foreground mt-0.5">{program.city}</div>
+                <div className="text-xs text-muted-foreground/60 mt-1">Verified {program.lastVerified}</div>
               </td>
               <td className="px-4 py-4 text-foreground whitespace-nowrap">
                 {formatDuration(program.minDurationWeeks, program.maxDurationWeeks)}
