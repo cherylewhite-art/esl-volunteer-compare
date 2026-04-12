@@ -74,7 +74,7 @@ export function ProviderPage({ provider, programs }: ProviderPageProps) {
                       <th className="px-4 py-3 font-semibold text-foreground">Country</th>
                       <th className="px-4 py-3 font-semibold text-foreground whitespace-nowrap">Min Duration</th>
                       <th className="px-4 py-3 font-semibold text-foreground whitespace-nowrap">Weekly Cost</th>
-                      <th className="px-4 py-3 text-center font-semibold text-foreground">Housing</th>
+                      <th className="px-4 py-3 font-semibold text-foreground">Housing</th>
                       <th className="px-4 py-3"></th>
                     </tr>
                   </thead>
@@ -100,11 +100,11 @@ export function ProviderPage({ provider, programs }: ProviderPageProps) {
                               <>${program.weeklyCostUsd}<span className="text-muted-foreground font-normal">/wk</span></>
                             )}
                           </td>
-                          <td className="px-4 py-3 text-center">
+                          <td className="px-4 py-3">
                             {program.housingIncluded ? (
-                              <Check className="h-4 w-4 text-emerald-500 mx-auto" />
+                              <span className="text-sm text-foreground">{program.housingType ?? "Included"}</span>
                             ) : (
-                              <X className="h-4 w-4 text-muted-foreground/40 mx-auto" />
+                              <X className="h-4 w-4 text-muted-foreground/40" />
                             )}
                           </td>
                           <td className="px-4 py-3">

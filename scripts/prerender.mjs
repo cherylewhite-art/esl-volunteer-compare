@@ -7,7 +7,43 @@ const projectRoot = resolve(__dirname, "..");
 const distDir = resolve(projectRoot, "dist/public");
 const serverBundle = resolve(projectRoot, "dist/server/entry-server.js");
 
-const { render, routeMetadata, countries } = await import(pathToFileURL(serverBundle).href);
+const { render, routeMetadata, countries, providers } = await import(pathToFileURL(serverBundle).href);
+
+const BASE = "https://eslvolunteerfinder.com";
+
+function buildBreadcrumbJson(route) {
+  const items = [];
+  const add = (name, url) =>
+    items.push({ "@type": "ListItem", position: items.length + 1, name, item: url });
+
+  // All pages except home start with Home
+  if (route === "/") return null;
+  add("Home", `${BASE}/`);
+
+  const countryMatch = route.match(/^\/volunteer-teach-english-(.+)$/);
+  const providerMatch = route.match(/^\/program\/(.+)$/);
+
+  if (countryMatch) {
+    const country = countries.find((c) => c.slug === countryMatch[1]);
+    add("Countries", `${BASE}/countries`);
+    if (country) add(country.name, `${BASE}${route}`);
+  } else if (providerMatch) {
+    const provider = providers.find((p) => p.slug === providerMatch[1]);
+    add("Providers", `${BASE}/providers`);
+    if (provider) add(provider.shortName ?? provider.name, `${BASE}${route}`);
+  } else if (route === "/countries") {
+    add("Countries", `${BASE}/countries`);
+  } else if (route === "/providers") {
+    add("Providers", `${BASE}/providers`);
+  } else if (route === "/cost-guide") {
+    add("Cost Guide", `${BASE}/cost-guide`);
+  } else if (route === "/about") {
+    add("About", `${BASE}/about`);
+  }
+
+  if (items.length < 2) return null;
+  return JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: items });
+}
 
 const routes = [
   "/",
@@ -85,6 +121,7 @@ for (const route of routes) {
       `<meta name="twitter:image" content="${OG_IMAGE}"/>`,
       `<script type="application/ld+json">${LD_JSON}</script>`,
       ...(FAQ_JSON ? [`<script type="application/ld+json">${FAQ_JSON}</script>`] : []),
+      ...(buildBreadcrumbJson(route) ? [`<script type="application/ld+json">${buildBreadcrumbJson(route)}</script>`] : []),
     ].join("\n    ");
 
     // Strip any head tags that react-helmet-async renders inline in the body

@@ -17,7 +17,7 @@ export function ComparisonTable({ programs }: ComparisonTableProps) {
             <th className="text-left px-4 py-3 font-semibold text-foreground min-w-[180px]">Provider</th>
             <th className="text-left px-4 py-3 font-semibold text-foreground whitespace-nowrap">Min Duration</th>
             <th className="text-left px-4 py-3 font-semibold text-foreground whitespace-nowrap">Weekly Cost</th>
-            <th className="text-center px-4 py-3 font-semibold text-foreground whitespace-nowrap">Housing</th>
+            <th className="text-left px-4 py-3 font-semibold text-foreground whitespace-nowrap">Housing</th>
             <th className="text-center px-4 py-3 font-semibold text-foreground whitespace-nowrap">Meals</th>
             <th className="text-left px-4 py-3 font-semibold text-foreground whitespace-nowrap">App. Fee</th>
             <th className="px-4 py-3"></th>
@@ -46,11 +46,11 @@ export function ComparisonTable({ programs }: ComparisonTableProps) {
                 )}
                 <span className="text-muted-foreground">/wk</span>
               </td>
-              <td className="px-4 py-4 text-center">
+              <td className="px-4 py-4">
                 {program.housingIncluded ? (
-                  <Check className="h-4 w-4 text-emerald-500 mx-auto" />
+                  <span className="text-foreground text-sm">{program.housingType ?? "Included"}</span>
                 ) : (
-                  <X className="h-4 w-4 text-muted-foreground/40 mx-auto" />
+                  <X className="h-4 w-4 text-muted-foreground/40" />
                 )}
               </td>
               <td className="px-4 py-4 text-center">
@@ -60,8 +60,14 @@ export function ComparisonTable({ programs }: ComparisonTableProps) {
                   <X className="h-4 w-4 text-muted-foreground/40 mx-auto" />
                 )}
               </td>
-              <td className="px-4 py-4 text-muted-foreground whitespace-nowrap">
-                {program.applicationFeeUsd ? `$${program.applicationFeeUsd}` : "—"}
+              <td className="px-4 py-4 whitespace-nowrap">
+                {program.applicationFeeUsd ? (
+                  <span className="text-muted-foreground">${program.applicationFeeUsd}</span>
+                ) : program.applicationFeeNote ? (
+                  <span className="text-xs text-muted-foreground">Included</span>
+                ) : (
+                  <span className="text-muted-foreground">—</span>
+                )}
               </td>
               <td className="px-4 py-4">
                 <a
