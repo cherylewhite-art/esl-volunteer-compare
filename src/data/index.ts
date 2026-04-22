@@ -39,6 +39,7 @@ export interface Country {
   flag: string;
   region: string;
   intro: string;
+  metaDescription?: string;
   costSummary: string;
   programTypes: string[];
   faqs: { question: string; answer: string }[];
@@ -220,35 +221,49 @@ export const countries: Country[] = [
     flag: "🇵🇪",
     region: "South America",
     intro:
-      "Peru combines rich history and natural beauty with meaningful volunteer opportunities. ESL programs are concentrated in Cusco, Lima, and the Sacred Valley. English education demand is high in Peru's growing economy, and volunteer programs range from short immersion experiences to long-term school placements.",
+      "Peru is one of Latin America's most rewarding destinations to volunteer teach English. With programs based in Cusco, Lima, and the Sacred Valley, you can choose between urban classrooms in the capital and community schools near Machu Picchu. English education demand is growing rapidly across Peru — from primary schools in highland villages to secondary schools in Lima's expanding suburbs.\n\nMost ESL volunteer programs in Peru run year-round with flexible start dates, making it easier to fit a placement around your schedule. Costs typically range from $100–$230 per week, and housing — often with a host family or in a shared volunteer house — is usually included. A host family placement in Cusco typically includes meals as well, which keeps daily expenses low.\n\nNo prior teaching experience is required by most programs. Basic Spanish is helpful but not a prerequisite — your role is to deliver English instruction, and providers include in-country orientation before your first classroom day. Program lengths start at two weeks, though four weeks or longer tends to be more impactful for students and more rewarding for volunteers.",
+    metaDescription:
+      "Compare ESL volunteer programs in Peru by cost, location, and duration. Programs in Cusco, Lima, and the Sacred Valley from $100–$230/week. Independent comparison — no paid placements.",
     costSummary:
       "Weekly costs in Peru range from $100–$230/week. Housing is often included. Some programs also include meals with host families.",
     programTypes: [
-      "Primary and secondary school teaching",
-      "Community ESL conversation classes",
-      "Sacred Valley village programs",
-      "Lima urban school placements",
+      "Primary and secondary school teaching (Cusco highlands)",
+      "Secondary school classroom support in Lima",
+      "Community ESL conversation classes and adult literacy",
+      "Sacred Valley and rural village programs",
+      "Orphanage and underprivileged youth English programs",
+      "TEFL-supported structured curriculum placements",
     ],
     faqs: [
       {
-        question: "Do I need to speak Spanish to volunteer in Peru?",
+        question: "Do I need to speak Spanish to volunteer teach English in Peru?",
         answer:
-          "Basic Spanish is helpful but not required by most programs. Teaching in English is the goal, and providers offer orientation to help you communicate.",
+          "Basic Spanish is helpful but not required by most programs. Your job is to teach English, and providers include in-country orientation to help you navigate daily life and communicate with school staff.",
       },
       {
-        question: "What is the minimum stay?",
+        question: "What is the minimum stay for ESL volunteer programs in Peru?",
         answer:
-          "Most Peru programs start at 2 weeks. Placements of 4–12 weeks are more impactful and commonly offered.",
+          "Most Peru programs start at 2 weeks. Placements of 4–12 weeks are more impactful for students and more personally rewarding — many providers offer discounts for longer stays.",
       },
       {
-        question: "Is altitude sickness a concern?",
+        question: "Is altitude sickness a concern in Peru?",
         answer:
-          "Cusco sits at about 3,400m elevation. Most people acclimatize within 2–3 days. Your provider will advise on arrival protocols.",
+          "Cusco sits at about 3,400m elevation. Most volunteers acclimatize within 2–3 days. Your provider will advise on arrival protocols, and Lima-based placements have no altitude concerns.",
       },
       {
-        question: "Are meals included?",
+        question: "Are meals included in Peru volunteer programs?",
         answer:
-          "Some Peru programs include meals, particularly those with host family placements. Urban placements in Lima less commonly include meals.",
+          "Some Peru programs include meals, particularly those with host family placements in Cusco and the Sacred Valley. Urban placements in Lima less commonly include meals.",
+      },
+      {
+        question: "What is the best time of year to volunteer teach English in Peru?",
+        answer:
+          "Peru's dry season runs May–September, making it the most popular time — especially in Cusco and the Sacred Valley. Most programs run year-round, so placements in the rainy season (October–April) are equally available and can be just as rewarding.",
+      },
+      {
+        question: "Do I need a TEFL certificate to volunteer in Peru?",
+        answer:
+          "The majority of ESL volunteer programs in Peru do not require a TEFL certificate. A few providers offer an optional TEFL training component as part of the placement. What matters most is enthusiasm and reliability.",
       },
     ],
   },

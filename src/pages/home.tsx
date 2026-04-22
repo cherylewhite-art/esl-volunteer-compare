@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "wouter";
 import { ArrowRight, Check, Globe, DollarSign, Shield } from "lucide-react";
 import { Layout } from "@/components/layout";
@@ -13,6 +13,15 @@ export default function Home() {
     FEATURED_COUNTRIES.includes(c.slug)
   );
 
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleEmailSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // TODO: wire to email provider (Mailchimp / Kit / Beehiiv)
+    setSubmitted(true);
+  };
+
   return (
     <Layout
       title="ESLVolunteerFinder — Compare ESL Volunteer Programs Abroad"
@@ -25,29 +34,31 @@ export default function Home() {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 text-xs font-medium text-primary bg-primary/8 border border-primary/20 rounded-full px-3 py-1 mb-6">
               <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-              Independent comparison — no paid placements
+              Not affiliated with any provider — zero paid placements, ever
             </div>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground leading-tight tracking-tight mb-5">
               Find the Right ESL Volunteer Program — Without the Guesswork
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed mb-8 max-w-2xl">
-              For volunteers who want to compare real costs, housing, and requirements across programs — without wading through provider marketing. Independent, no paid placements.
+              Every other ESL volunteer site takes money from the programs they list. We don't. Compare real costs, housing, and requirements across {programs.length} programs — side by side, without wading through provider marketing.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 mb-8">
+            <div className="flex flex-col sm:flex-row gap-3 mb-4">
               <Button asChild size="lg" className="rounded-md px-6 font-semibold">
                 <Link href="/countries" className="flex items-center gap-2">
-                  Compare by Country <ArrowRight className="h-4 w-4" />
+                  Compare Programs <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="rounded-md px-6 font-semibold">
-                <Link href="/cost-guide">See True Program Costs</Link>
-              </Button>
             </div>
+            <p className="text-sm text-muted-foreground mb-8">
+              Want cost breakdowns first?{" "}
+              <Link href="/cost-guide" className="text-primary underline underline-offset-2 font-medium">
+                Read the true cost guide →
+              </Link>
+            </p>
             <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-primary" />{programs.length} programs compared</span>
-              <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-primary" />{countries.length} countries</span>
-              <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-primary" />{providers.length} providers</span>
-              <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-primary" />No paid placements</span>
+              <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-primary" />We researched {programs.length} programs so you don't have to</span>
+              <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-primary" />{countries.length} countries covered</span>
+              <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-primary" />Zero referral fees or commissions</span>
             </div>
           </div>
         </div>
@@ -89,8 +100,8 @@ export default function Home() {
               },
               {
                 icon: Shield,
-                title: "Independent research",
-                desc: "No paid placements. Data gathered from public provider websites. Always verify directly.",
+                title: "No conflicts of interest",
+                desc: "Most comparison sites earn referral fees from the programs they recommend. We don't. No paid placements, no affiliate commissions — ever.",
               },
             ].map((item, i) => (
               <div key={i} className="flex gap-4">
@@ -134,10 +145,46 @@ export default function Home() {
                 >
                   <div className="text-4xl mb-3">{country.flag}</div>
                   <div className="font-semibold text-foreground text-sm mb-1">{country.name}</div>
-                  <div className="text-xs text-muted-foreground">{count} programs</div>
+                  <div className="text-xs text-muted-foreground mb-2">{count} programs</div>
+                  <div className="text-xs text-primary font-medium flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                    Compare <ArrowRight className="h-3 w-3" />
+                  </div>
                 </Link>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* ---- EMAIL CAPTURE ---- */}
+      <section className="bg-primary/5 border-b border-border py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="max-w-lg">
+            <h2 className="text-xl font-bold text-foreground mb-1">
+              We're adding 5 new countries in 2026 — get notified.
+            </h2>
+            <p className="text-sm text-muted-foreground mb-5">
+              No spam. One email when new countries go live.
+            </p>
+            {submitted ? (
+              <div className="flex items-center gap-2 text-primary font-medium text-sm">
+                <Check className="h-4 w-4" /> You're on the list.
+              </div>
+            ) : (
+              <form onSubmit={handleEmailSubmit} className="flex flex-col sm:flex-row gap-3">
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  className="flex-1 px-4 py-2.5 text-sm border border-border rounded-md bg-white text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                />
+                <Button type="submit" className="rounded-md px-5 font-semibold whitespace-nowrap">
+                  Notify me
+                </Button>
+              </form>
+            )}
           </div>
         </div>
       </section>

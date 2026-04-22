@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, Globe } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Helmet } from "react-helmet-async";
 
@@ -68,7 +68,7 @@ export function Layout({
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <div className="w-8 h-8 rounded-md bg-primary flex items-center justify-center">
-                <Globe className="h-5 w-5 text-white" />
+                <span className="text-white font-bold text-[11px] tracking-tight leading-none">ESL</span>
               </div>
               <span className="font-bold text-lg text-foreground tracking-tight">
                 ESL<span className="text-primary">VolunteerFinder</span>
@@ -134,7 +134,7 @@ export function Layout({
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-7 h-7 rounded bg-primary flex items-center justify-center">
-                  <Globe className="h-4 w-4 text-white" />
+                  <span className="text-white font-bold text-[10px] tracking-tight leading-none">ESL</span>
                 </div>
                 <span className="font-bold text-white">ESLVolunteerFinder</span>
               </div>

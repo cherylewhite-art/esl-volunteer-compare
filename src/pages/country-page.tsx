@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "wouter";
+import { Helmet } from "react-helmet-async";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { Layout } from "@/components/layout";
 import { ComparisonTable } from "@/components/comparison-table";
@@ -34,12 +35,29 @@ export function CountryPage({ country, programs }: CountryPageProps) {
     })
     .filter((r) => r.provider != null);
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: country.faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: { "@type": "Answer", text: faq.answer },
+    })),
+  };
+
+  const metaDescription =
+    country.metaDescription ??
+    `Compare ESL volunteer programs in ${country.name} by weekly cost, minimum duration, and included housing. Independent comparison — ${programs.length} programs listed.`;
+
   return (
     <Layout
       title={`Volunteer Teaching English in ${country.name}`}
-      description={`Compare ESL volunteer programs in ${country.name} by weekly cost, minimum duration, and included housing. Independent comparison — ${programs.length} programs listed.`}
+      description={metaDescription}
       canonical={`https://eslvolunteerfinder.com/volunteer-teach-english-${country.slug}`}
     >
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
+      </Helmet>
       {/* Breadcrumb */}
       <div className="bg-muted/30 border-b border-border">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-2 text-sm text-muted-foreground">
