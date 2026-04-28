@@ -1,6 +1,4 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
-
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: any, res: any) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -14,8 +12,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const apiKey = process.env.BEEHIIV_API_KEY;
 
   if (!publicationId || !apiKey) {
-    console.error("Missing BEEHIIV_PUBLICATION_ID or BEEHIIV_API_KEY env vars");
-    return res.status(500).json({ error: "Server configuration error" });
+    return res.status(500).json({ error: "Server configuration error: missing env vars" });
   }
 
   try {
@@ -39,13 +36,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (!response.ok) {
       const text = await response.text();
-      console.error("Beehiiv error:", response.status, text);
-      return res.status(502).json({ error: "Subscription failed" });
+      return res.status(502).json({ error: `Beehiiv ${response.status}: ${text.slice(0, 120)}` });
     }
 
     return res.status(200).json({ success: true });
   } catch (err) {
-    console.error("Beehiiv fetch error:", err);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: `Fetch failed: ${String(err)}` });
   }
 }

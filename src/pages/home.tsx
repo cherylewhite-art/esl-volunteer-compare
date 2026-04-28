@@ -17,12 +17,12 @@ export default function Home() {
   const [submitted, setSubmitted] = useState(false);
 
   const [submitting, setSubmitting] = React.useState(false);
-  const [submitError, setSubmitError] = React.useState(false);
+  const [submitError, setSubmitError] = React.useState<string | null>(null);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    setSubmitError(false);
+    setSubmitError(null);
     try {
       const res = await fetch("/api/subscribe", {
         method: "POST",
@@ -32,10 +32,11 @@ export default function Home() {
       if (res.ok) {
         setSubmitted(true);
       } else {
-        setSubmitError(true);
+        const body = await res.json().catch(() => ({}));
+        setSubmitError(`Error ${res.status}${body?.error ? `: ${body.error}` : ""}`);
       }
-    } catch {
-      setSubmitError(true);
+    } catch (err) {
+      setSubmitError(`Network error — ${String(err)}`);
     } finally {
       setSubmitting(false);
     }
@@ -206,7 +207,7 @@ export default function Home() {
                   </Button>
                 </form>
                 {submitError && (
-                  <p className="text-sm text-red-600 mt-2">Something went wrong — please try again.</p>
+                  <p className="text-sm text-red-600 mt-2">{submitError}</p>
                 )}
               </>
             )}
