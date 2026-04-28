@@ -58,6 +58,45 @@ export default function Providers() {
           })}
         </div>
 
+        {/* Head-to-head comparisons */}
+        <section>
+          <h2 className="text-2xl font-bold text-foreground mb-2">Head-to-head comparisons</h2>
+          <p className="text-muted-foreground text-sm mb-6 max-w-2xl">
+            Side-by-side breakdowns of costs, countries, housing, and who each program suits best.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[
+              {
+                href: "/compare/ivhq-vs-projects-abroad",
+                title: "IVHQ vs Projects Abroad",
+                sub: "Budget vs premium — costs, support, and who each suits",
+              },
+              {
+                href: "/compare/ivhq-vs-gvi",
+                title: "IVHQ vs GVI",
+                sub: "Vietnam head-to-head — TEFL inclusion, meals, and value",
+              },
+              {
+                href: "/compare/ivhq-vs-love-volunteers",
+                title: "IVHQ vs Love Volunteers",
+                sub: "Two budget providers — Vietnam and Nepal overlap",
+              },
+            ].map(({ href, title, sub }) => (
+              <Link
+                key={href}
+                href={href}
+                className="group flex flex-col gap-2 p-5 bg-white border border-border rounded-lg hover:border-primary/40 hover:shadow-sm transition-all"
+              >
+                <div className="font-semibold text-foreground text-sm group-hover:text-primary transition-colors">{title}</div>
+                <p className="text-xs text-muted-foreground leading-relaxed">{sub}</p>
+                <div className="flex items-center gap-1 text-xs text-primary font-medium mt-auto pt-1">
+                  Full comparison <ArrowRight className="h-3 w-3" />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
         {/* IVHQ vs Projects Abroad */}
         <section>
           <h2 className="text-2xl font-bold text-foreground mb-2">IVHQ vs Projects Abroad</h2>
@@ -95,11 +134,14 @@ export default function Providers() {
             </table>
           </div>
           <div className="mt-4 flex flex-col sm:flex-row gap-3">
-            <Link href="/program/international-volunteer-hq" className="inline-flex items-center gap-1.5 text-sm text-primary font-medium hover:underline">
-              <ArrowRight className="h-3.5 w-3.5" /> Full IVHQ review
+            <Link href="/compare/ivhq-vs-projects-abroad" className="inline-flex items-center gap-1.5 text-sm text-primary font-semibold hover:underline">
+              <ArrowRight className="h-3.5 w-3.5" /> Full IVHQ vs Projects Abroad comparison
             </Link>
-            <Link href="/program/projects-abroad" className="inline-flex items-center gap-1.5 text-sm text-primary font-medium hover:underline">
-              <ArrowRight className="h-3.5 w-3.5" /> Full Projects Abroad review
+            <Link href="/program/international-volunteer-hq" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary hover:underline">
+              IVHQ review
+            </Link>
+            <Link href="/program/projects-abroad" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary hover:underline">
+              Projects Abroad review
             </Link>
           </div>
         </section>
