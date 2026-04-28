@@ -8,12 +8,14 @@ export default async function handler(req: any, res: any) {
     return res.status(400).json({ error: "Valid email required" });
   }
 
-  const publicationId = process.env.BEEHIIV_PUBLICATION_ID;
+  const rawId = process.env.BEEHIIV_PUBLICATION_ID;
   const apiKey = process.env.BEEHIIV_API_KEY;
 
-  if (!publicationId || !apiKey) {
+  if (!rawId || !apiKey) {
     return res.status(500).json({ error: "Server configuration error: missing env vars" });
   }
+
+  const publicationId = rawId.startsWith("pub_") ? rawId : `pub_${rawId}`;
 
   try {
     const response = await fetch(
