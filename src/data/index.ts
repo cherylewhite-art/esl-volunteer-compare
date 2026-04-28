@@ -83,22 +83,22 @@ export const countries: Country[] = [
       {
         question: "Do I need a TEFL certificate to volunteer in Vietnam?",
         answer:
-          "Most volunteer programs do not require TEFL certification, though some programs offer it as part of the placement. A few programs aimed at long-term placements may prefer certified candidates.",
+          "No — most ESL volunteer programs in Vietnam do not require TEFL certification. Fluent English is the primary qualification, and providers generally offer a short in-country orientation before your first classroom day. A TEFL certificate can strengthen your application for more structured school placements, but it is rarely a hard requirement and will not disqualify you from any program listed here.",
       },
       {
         question: "How long do I need to stay?",
         answer:
-          "Minimum durations vary by program, typically 2–4 weeks. Longer commitments of 8–12 weeks are more impactful for the students and often preferred by providers.",
+          "Minimum durations in Vietnam start at 2 weeks, but a 4-week stay is widely considered the most practical commitment. Two weeks gives you just enough time to settle in before it's over; four weeks allows you to build genuine rapport with students and make a measurable difference. Providers increasingly prefer volunteers who commit to 8–12 weeks, and some offer discounted weekly rates for longer stays.",
       },
       {
         question: "Are flights included in the program fee?",
         answer:
-          "No. Flights are not included in any of the programs listed here. You are responsible for booking your own travel to Vietnam.",
+          "No — flights to Vietnam are your own responsibility and are not included in any program fee listed on this site. Vietnam is well-served by major international carriers with connections through Bangkok, Hong Kong, and Singapore. Budget approximately $600–$1,200 for a round-trip from North America or Europe depending on your departure city and how far in advance you book.",
       },
       {
         question: "Is housing included in the program?",
         answer:
-          "Housing is included in most Vietnam programs listed on this site. Check each program's details for the exact inclusion status.",
+          "Yes — housing is included in all three Vietnam programs listed on this site. Accommodation is typically shared volunteer housing or a dorm-style facility within commuting distance of your placement school. Note that meals are not included in most Vietnam programs — budget $10–15 per day for food, which is easy to manage on local street food.",
       },
     ],
   },
@@ -121,22 +121,22 @@ export const countries: Country[] = [
       {
         question: "Do I need a TEFL certificate for Thailand?",
         answer:
-          "Most volunteer placements in Thailand do not require TEFL certification. Some providers include a short orientation or teaching workshop.",
+          "No — the majority of volunteer placements in Thailand do not require TEFL certification. A willingness to engage with students and native or near-native English fluency are the main requirements. Most providers run a short teaching orientation in the first few days to help you prepare. A TEFL certificate is helpful if you want a longer-term or more formal placement, but it is not a standard requirement.",
       },
       {
         question: "What is the minimum stay?",
         answer:
-          "Most Thailand programs require a minimum of 2–4 weeks. Longer stays of 8+ weeks are more common and more impactful.",
+          "Most Thailand programs start at a minimum of 2 weeks, though 4-week placements are more common and more effective for students. If you're on a gap year or career break, committing to 6–8 weeks gives you time to settle into the community, build relationships with students, and explore the country on weekends. Many providers offer discounted weekly rates for stays of 8 weeks or more.",
       },
       {
         question: "Are meals included?",
         answer:
-          "Meals are included in some programs, particularly rural placements. Urban placements often provide breakfast only or no meals.",
+          "Meals are included in most Thailand programs, particularly in rural temple schools and village placements where you eat alongside the local community. Urban placements in Bangkok and Chiang Mai may include breakfast only or no meals at all. A $180/week program with meals included can work out significantly cheaper overall than a $140/week program without — always check inclusions before comparing prices.",
       },
       {
         question: "Is Thailand safe for solo volunteers?",
         answer:
-          "Thailand is considered one of the safer countries for volunteer travel. Reputable providers offer in-country support and orientation on arrival.",
+          "Thailand is consistently rated one of the safest countries in Southeast Asia for solo travelers and volunteers, with a well-developed tourism infrastructure and low rates of serious crime directed at visitors. Reputable providers include in-country coordinators, 24/7 emergency support, and a structured arrival orientation covering local norms and practical safety. As with any international travel, standard precautions apply — keep copies of important documents and follow your provider's local guidance.",
       },
     ],
   },
@@ -159,21 +159,22 @@ export const countries: Country[] = [
       {
         question: "Is Nepal suitable for first-time volunteers?",
         answer:
-          "Yes. Nepal is popular with first-time volunteers due to the warm welcome from local communities and strong provider support networks.",
+          "Yes — Nepal is one of the most recommended destinations for first-time volunteers. Local communities are exceptionally welcoming, the cultural adjustment is manageable, and providers operating here tend to have strong on-the-ground support that helps new volunteers settle quickly. Living costs are low, and the overall experience tends to be deeply meaningful. Many people choose Nepal for their first volunteer trip precisely because it offers real impact without demanding prior experience.",
       },
       {
         question: "What is the minimum duration?",
         answer:
-          "Most Nepal programs start at 2 weeks minimum, with 4–8 week stays being most common.",
+          "Most Nepal programs start at a minimum of 2 weeks, but 4–8 week stays are more typical and considerably more effective. A two-week placement leaves very little active teaching time once you account for arrival orientation and altitude acclimatization in higher-elevation placements. For a genuinely impactful experience, plan for at least 4 weeks.",
       },
       {
         question: "Are flights included?",
-        answer: "No. Flights to Nepal are your own responsibility.",
+        answer:
+          "No — flights to Nepal are your own responsibility and are not included in any program fee listed here. Kathmandu is the entry point for most volunteers and is served by Qatar Airways, Turkish Airlines, Air India, and Emirates among others. Budget approximately $700–$1,400 for a round-trip from North America or Europe depending on routing and booking lead time.",
       },
       {
         question: "Do programs include meals?",
         answer:
-          "Most Nepal programs include meals with host families or at program accommodation. This is one of the benefits of programs in this region.",
+          "Yes — most Nepal programs include meals, either with a host family or at program accommodation. Meals are typically home-cooked Nepali food, with dal bhat (lentil soup with rice) as the staple. This inclusion significantly reduces your daily spending needs and is one reason Nepal ranks as one of the most affordable 4-week volunteer destinations on this site.",
       },
     ],
   },
@@ -196,22 +197,22 @@ export const countries: Country[] = [
       {
         question: "Is Ghana English-speaking?",
         answer:
-          "English is the official language of Ghana, which makes the transition easier for volunteers. Local languages such as Twi are also widely spoken.",
+          "Yes — English is the official language of Ghana and the primary medium of instruction in schools, which makes it uniquely accessible among African volunteer destinations. You won't need a translator to work with students or teachers. That said, most Ghanaians also speak Twi, Fante, or other regional languages in daily life — picking up a few basic phrases is appreciated and goes a long way in building rapport with the local community.",
       },
       {
         question: "What is the minimum stay?",
         answer:
-          "Most Ghana programs require a minimum of 2–4 weeks. Longer stays of 8–12 weeks are recommended for deeper community impact.",
+          "Most Ghana programs require a minimum of 2–4 weeks. For volunteers who want to build real connections with students and move beyond surface-level impact, 8–12 week stays are strongly recommended. Ghana's school calendar follows a structure similar to the UK academic year, so aligning your arrival with the start of a school term will maximize your teaching time.",
       },
       {
         question: "Is housing safe and included?",
         answer:
-          "Most reputable programs in Ghana include accommodation in safe, vetted housing. Always verify this with your provider before booking.",
+          "Yes — all reputable programs listed on this site include accommodation in vetted housing, typically a shared volunteer house or homestay near your placement in Accra, Cape Coast, or a surrounding community. Providers conduct regular checks on housing quality and maintain 24/7 emergency contact protocols. Ghana is widely considered the most politically stable and safe entry point for volunteers to West Africa.",
       },
       {
         question: "Do I need any vaccinations for Ghana?",
         answer:
-          "Recommended vaccinations include Yellow Fever (required), Typhoid, Hepatitis A, and Malaria prophylaxis. Consult your doctor at least 6 weeks before travel.",
+          "The following are recommended before traveling to Ghana: Yellow Fever vaccination (required for entry — proof is checked at the border), Typhoid, Hepatitis A, Tetanus, and Meningitis. Malaria prophylaxis is strongly advised for your entire stay. Consult a travel health clinic or your GP at least 6–8 weeks before departure to allow time for medication courses to take effect, and bring sufficient malaria tablets for the full length of your placement.",
       },
     ],
   },

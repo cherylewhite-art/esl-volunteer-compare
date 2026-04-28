@@ -16,10 +16,29 @@ export default function Home() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleEmailSubmit = (e: React.FormEvent) => {
+  const [submitting, setSubmitting] = React.useState(false);
+  const [submitError, setSubmitError] = React.useState(false);
+
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: wire to email provider (Mailchimp / Kit / Beehiiv)
-    setSubmitted(true);
+    setSubmitting(true);
+    setSubmitError(false);
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        setSubmitError(true);
+      }
+    } catch {
+      setSubmitError(true);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -58,7 +77,7 @@ export default function Home() {
             <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
               <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-primary" />We researched {programs.length} programs so you don't have to</span>
               <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-primary" />{countries.length} countries covered</span>
-              <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-primary" />Zero referral fees or commissions</span>
+              <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-primary" />Transparent: referral fees disclosed, never hidden</span>
             </div>
           </div>
         </div>
@@ -101,7 +120,7 @@ export default function Home() {
               {
                 icon: Shield,
                 title: "No conflicts of interest",
-                desc: "Most comparison sites earn referral fees from the programs they recommend. We don't. No paid placements, no affiliate commissions — ever.",
+                desc: "Programs are listed because they're real, researched options — not because they paid us. We may earn a referral fee if you apply through a link on this site. We disclose this because transparency builds more trust than hiding it.",
               },
             ].map((item, i) => (
               <div key={i} className="flex gap-4">
@@ -171,19 +190,25 @@ export default function Home() {
                 <Check className="h-4 w-4" /> You're on the list.
               </div>
             ) : (
-              <form onSubmit={handleEmailSubmit} className="flex flex-col sm:flex-row gap-3">
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your@email.com"
-                  className="flex-1 px-4 py-2.5 text-sm border border-border rounded-md bg-white text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
-                />
-                <Button type="submit" className="rounded-md px-5 font-semibold whitespace-nowrap">
-                  Notify me
-                </Button>
-              </form>
+              <>
+                <form onSubmit={handleEmailSubmit} className="flex flex-col sm:flex-row gap-3">
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="your@email.com"
+                    disabled={submitting}
+                    className="flex-1 px-4 py-2.5 text-sm border border-border rounded-md bg-white text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary disabled:opacity-60"
+                  />
+                  <Button type="submit" disabled={submitting} className="rounded-md px-5 font-semibold whitespace-nowrap">
+                    {submitting ? "Subscribing…" : "Notify me"}
+                  </Button>
+                </form>
+                {submitError && (
+                  <p className="text-sm text-red-600 mt-2">Something went wrong — please try again.</p>
+                )}
+              </>
             )}
           </div>
         </div>

@@ -20,6 +20,10 @@ import Countries from "./pages/countries";
 import Providers from "./pages/providers";
 import CostGuide from "./pages/cost-guide";
 import About from "./pages/about";
+import CompareIVHQvsLoveVolunteers from "./pages/compare-ivhq-vs-love-volunteers";
+import CompareIVHQvsProjectsAbroad from "./pages/compare-ivhq-vs-projects-abroad";
+import CompareIVHQvsGVI from "./pages/compare-ivhq-vs-gvi";
+import NoTeflRequired from "./pages/no-tefl-required";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -61,6 +65,14 @@ function Router() {
       <Route path="/providers" component={Providers} />
       <Route path="/cost-guide" component={CostGuide} />
       <Route path="/about" component={About} />
+
+      {/* Provider comparison pages */}
+      <Route path="/compare/ivhq-vs-love-volunteers" component={CompareIVHQvsLoveVolunteers} />
+      <Route path="/compare/ivhq-vs-projects-abroad" component={CompareIVHQvsProjectsAbroad} />
+      <Route path="/compare/ivhq-vs-gvi" component={CompareIVHQvsGVI} />
+
+      {/* Standalone SEO pages */}
+      <Route path="/no-tefl-required" component={NoTeflRequired} />
 
       {/* Catch-all */}
       <Route component={NotFound} />

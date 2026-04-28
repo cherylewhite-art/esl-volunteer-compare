@@ -86,7 +86,13 @@ export default function About() {
         <section className="space-y-4">
           <h2 className="text-xl font-bold text-foreground">Methodology & disclaimer</h2>
           <p className="text-muted-foreground leading-relaxed">
-            All data is gathered from publicly available provider websites. We do not have relationships with any of the listed providers and receive no compensation for listings or outbound clicks. Program costs, inclusions, and availability change frequently. Always verify details directly with the official provider before applying.
+            All data is gathered from publicly available provider websites. Program costs, inclusions, and availability change frequently. Always verify details directly with the official provider before applying.
+          </p>
+          <p className="text-muted-foreground leading-relaxed">
+            <strong className="text-foreground">Referral fee disclosure:</strong> If you click a "View Program" or "Visit Official Website" link on this site and subsequently apply or enroll, we may earn a referral commission from the provider. This commission is paid by the provider and costs you nothing. It does not influence which programs are listed, how programs are ranked, or the data we publish — all eligible programs are listed regardless of whether an affiliate relationship exists. We disclose this because we think transparency is more valuable than appearing to have no commercial model at all.
+          </p>
+          <p className="text-muted-foreground leading-relaxed">
+            Programs are never paid to appear on this site. There are no sponsored listings, no paid placements, and no providers who have purchased a featured position. The independence of this data is the product.
           </p>
         </section>
 

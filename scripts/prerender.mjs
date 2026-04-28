@@ -11,6 +11,43 @@ const { render, routeMetadata, countries, providers } = await import(pathToFileU
 
 const BASE = "https://eslvolunteerfinder.com";
 
+function buildOgImageUrl(route, countries, providers) {
+  const enc = (s) => encodeURIComponent(s);
+
+  if (route === "/") {
+    return `${BASE}/api/og?title=${enc("ESLVolunteerFinder")}&sub=${enc("Compare ESL volunteer programs abroad — independent, no paid placements")}`;
+  }
+
+  const countrySlug = route.match(/^\/volunteer-teach-english-(.+)$/)?.[1];
+  if (countrySlug) {
+    const country = countries.find((c) => c.slug === countrySlug);
+    return `${BASE}/api/og?title=${enc(`Volunteer Teaching English in ${country?.name ?? countrySlug}`)}&sub=${enc("Compare programs by cost, housing, and duration — independent data")}`;
+  }
+
+  const providerSlug = route.match(/^\/program\/(.+)$/)?.[1];
+  if (providerSlug) {
+    const provider = providers.find((p) => p.slug === providerSlug);
+    const name = provider?.shortName ?? provider?.name ?? providerSlug;
+    return `${BASE}/api/og?title=${enc(`${name} Review`)}&sub=${enc(`ESL volunteer programs — costs, countries, and what to expect`)}`;
+  }
+
+  const compareSlug = route.match(/^\/compare\/(.+)$/)?.[1];
+  if (compareSlug) {
+    const label = compareSlug.replace(/-vs-/, " vs ").replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    return `${BASE}/api/og?title=${enc(label)}&sub=${enc("Side-by-side comparison — costs, countries, and who each suits")}`;
+  }
+
+  const staticTitles = {
+    "/countries": ["Compare Programs by Country", "5 destinations · 11 programs · independent data"],
+    "/providers": ["ESL Volunteer Providers", "IVHQ, GVI, Projects Abroad, Love Volunteers, World Volunteers"],
+    "/cost-guide": ["The True Cost of ESL Volunteering", "Program fees, application costs, and spending money by country"],
+    "/about": ["About ESLVolunteerFinder", "Independent comparison — no paid placements, ever"],
+    "/no-tefl-required": ["No TEFL Required", "11 ESL volunteer programs you can join with English fluency alone"],
+  };
+  const [t, s] = staticTitles[route] ?? ["ESLVolunteerFinder", "Independent ESL volunteer program comparison"];
+  return `${BASE}/api/og?title=${enc(t)}&sub=${enc(s)}`;
+}
+
 function buildBreadcrumbJson(route) {
   const items = [];
   const add = (name, url) =>
@@ -39,6 +76,12 @@ function buildBreadcrumbJson(route) {
     add("Cost Guide", `${BASE}/cost-guide`);
   } else if (route === "/about") {
     add("About", `${BASE}/about`);
+  } else if (route === "/no-tefl-required") {
+    add("No TEFL Required", `${BASE}/no-tefl-required`);
+  } else if (route.startsWith("/compare/")) {
+    const label = route.replace("/compare/", "").replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    add("Providers", `${BASE}/providers`);
+    add(label, `${BASE}${route}`);
   }
 
   if (items.length < 2) return null;
@@ -61,6 +104,10 @@ const routes = [
   "/providers",
   "/cost-guide",
   "/about",
+  "/compare/ivhq-vs-love-volunteers",
+  "/compare/ivhq-vs-projects-abroad",
+  "/compare/ivhq-vs-gvi",
+  "/no-tefl-required",
 ];
 
 // Read the original Vite-built template once
@@ -69,7 +116,6 @@ const originalTemplate = readFileSync(resolve(distDir, "index.html"), "utf-8");
 // Strip the default <title> placeholder — each page injects its own
 const baseTemplate = originalTemplate.replace(/<title>[^<]*<\/title>/, "");
 
-const OG_IMAGE = "https://eslvolunteerfinder.com/opengraph.jpg";
 const LD_JSON = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "WebSite",
@@ -86,6 +132,8 @@ for (const route of routes) {
     const meta = routeMetadata[route];
 
     if (!meta) throw new Error(`No metadata found for route: ${route}`);
+
+    const OG_IMAGE = buildOgImageUrl(route, countries, providers);
 
     // Build FAQ schema for country pages
     const countrySlug = route.match(/^\/volunteer-teach-english-(.+)$/)?.[1];

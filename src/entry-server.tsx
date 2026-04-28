@@ -20,6 +20,10 @@ import Countries from "./pages/countries";
 import Providers from "./pages/providers";
 import CostGuide from "./pages/cost-guide";
 import About from "./pages/about";
+import CompareIVHQvsLoveVolunteers from "./pages/compare-ivhq-vs-love-volunteers";
+import CompareIVHQvsProjectsAbroad from "./pages/compare-ivhq-vs-projects-abroad";
+import CompareIVHQvsGVI from "./pages/compare-ivhq-vs-gvi";
+import NoTeflRequired from "./pages/no-tefl-required";
 import NotFound from "./pages/not-found";
 
 // Static metadata for each route — used by the prerender script to inject
@@ -52,6 +56,26 @@ export const routeMetadata: Record<string, { title: string; description: string;
     title: "About ESLVolunteerFinder",
     description: "ESLVolunteerFinder is an independent comparison site for ESL volunteer programs abroad. Learn how we collect data and how to use the site.",
     canonical: `${BASE}/about`,
+  },
+  "/compare/ivhq-vs-love-volunteers": {
+    title: "IVHQ vs Love Volunteers: ESL Volunteer Programs Compared | ESLVolunteerFinder",
+    description: "IVHQ vs Love Volunteers: side-by-side comparison of costs, countries, housing, and support for ESL volunteer programs in Vietnam and Nepal. Independent analysis.",
+    canonical: `${BASE}/compare/ivhq-vs-love-volunteers`,
+  },
+  "/compare/ivhq-vs-projects-abroad": {
+    title: "IVHQ vs Projects Abroad: ESL Volunteer Programs Compared | ESLVolunteerFinder",
+    description: "IVHQ vs Projects Abroad: a direct comparison of the budget and premium ends of ESL volunteering. Costs, support quality, countries, and who each suits.",
+    canonical: `${BASE}/compare/ivhq-vs-projects-abroad`,
+  },
+  "/compare/ivhq-vs-gvi": {
+    title: "IVHQ vs GVI: ESL Volunteer Programs in Vietnam Compared | ESLVolunteerFinder",
+    description: "IVHQ vs GVI for ESL volunteering in Vietnam: cost breakdown, TEFL inclusion, meals, and which program suits which type of volunteer. Independent comparison.",
+    canonical: `${BASE}/compare/ivhq-vs-gvi`,
+  },
+  "/no-tefl-required": {
+    title: "ESL Volunteer Programs With No TEFL Requirement | ESLVolunteerFinder",
+    description: "All 11 ESL volunteer programs on this site accept volunteers without a TEFL certificate. Compare programs by cost, country, and housing. English fluency is enough.",
+    canonical: `${BASE}/no-tefl-required`,
   },
   ...Object.fromEntries(
     countries.map((c) => {
@@ -101,6 +125,10 @@ export function render(url: string) {
           <Route path="/providers" component={Providers} />
           <Route path="/cost-guide" component={CostGuide} />
           <Route path="/about" component={About} />
+          <Route path="/compare/ivhq-vs-love-volunteers" component={CompareIVHQvsLoveVolunteers} />
+          <Route path="/compare/ivhq-vs-projects-abroad" component={CompareIVHQvsProjectsAbroad} />
+          <Route path="/compare/ivhq-vs-gvi" component={CompareIVHQvsGVI} />
+          <Route path="/no-tefl-required" component={NoTeflRequired} />
           <Route component={NotFound} />
         </Switch>
       </Router>

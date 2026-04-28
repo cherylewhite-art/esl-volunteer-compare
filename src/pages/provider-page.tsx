@@ -171,6 +171,10 @@ export function ProviderPage({ provider, programs }: ProviderPageProps) {
                   Visit Official Program <ExternalLink className="h-4 w-4" />
                 </a>
               </Button>
+              <p className="text-xs text-muted-foreground mt-3">
+                If you apply through a link on this site, we may earn a referral fee at no cost to you.{" "}
+                <Link href="/about" className="underline hover:text-foreground">Learn more</Link>.
+              </p>
             </section>
 
             {/* Next Steps */}
