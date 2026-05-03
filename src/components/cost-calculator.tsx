@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Calculator, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { programs, getFlagEmoji } from "@/data";
+import { programs, getFlagEmoji, getProviderName } from "@/data";
 
 const COUNTRY_OPTIONS = [
   { slug: "vietnam", name: "Vietnam" },
@@ -24,13 +24,12 @@ const COUNTRY_COST_DATA: Record<
 };
 
 const NO_MEALS_FOOD_BUDGET_PER_WEEK = 30;
-const COST_REPORT_PDF = "/2026-esl-cost-report.pdf";
 
-function triggerCostReportDownload() {
+function triggerBlobDownload(url: string, filename: string) {
   if (typeof window === "undefined") return;
   const a = document.createElement("a");
-  a.href = COST_REPORT_PDF;
-  a.download = "2026-ESL-Volunteer-Cost-Report.pdf";
+  a.href = url;
+  a.download = filename;
   a.rel = "noopener";
   document.body.appendChild(a);
   a.click();
@@ -87,20 +86,53 @@ export function CostCalculator() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [reportUrl, setReportUrl] = useState<string | null>(null);
+  const [reportFilename, setReportFilename] = useState("ESL-Cost-Report.pdf");
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!program) {
+      setSubmitError("Please select a program before requesting a report.");
+      return;
+    }
     setSubmitting(true);
     setSubmitError(null);
+    const countryName = COUNTRY_OPTIONS.find((c) => c.slug === country)?.name ?? country;
+    const payload = {
+      email,
+      country: { slug: country, name: countryName, flag: getFlagEmoji(country) },
+      program: {
+        slug: program.slug,
+        name: program.name,
+        provider: getProviderName(program.providerSlug) ?? program.providerSlug,
+        city: program.city,
+        weeklyFee: program.weeklyCostUsd ?? 0,
+        appFee: program.applicationFeeUsd,
+        mealsIncludedDefault: program.mealsIncluded,
+        housingType: program.housingType,
+      },
+      selections: {
+        weeks,
+        mealsIncluded: effectiveMealsIncluded,
+        spendingLowPerWeek: spendingLow,
+        spendingHighPerWeek: spendingHigh,
+      },
+      flights: { low: countryData.flightLow, high: countryData.flightHigh },
+    };
     try {
-      const res = await fetch("/api/subscribe", {
+      const res = await fetch("/api/cost-report", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, source: "cost-calculator" }),
+        body: JSON.stringify(payload),
       });
       if (res.ok) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const filename = `ESL-Cost-Report-${countryName}-${weeks}wk.pdf`;
+        setReportUrl(url);
+        setReportFilename(filename);
         setSubmitted(true);
-        triggerCostReportDownload();
+        triggerBlobDownload(url, filename);
       } else {
         const body = await res.json().catch(() => ({}));
         setSubmitError(`Error ${res.status}${body?.error ? `: ${body.error}` : ""}`);
@@ -296,19 +328,21 @@ export function CostCalculator() {
           {submitted ? (
             <div className="text-sm shrink-0">
               <div className="flex items-center gap-2 text-primary font-medium">
-                <Check className="h-4 w-4" /> Thanks — your download has started.
+                <Check className="h-4 w-4" /> Thanks — your personalized report is downloading.
               </div>
-              <div className="text-muted-foreground text-xs mt-1">
-                Didn't see it?{" "}
-                <a
-                  href={COST_REPORT_PDF}
-                  download="2026-ESL-Volunteer-Cost-Report.pdf"
-                  className="text-primary underline underline-offset-2 font-medium"
-                >
-                  Download the report
-                </a>
-                .
-              </div>
+              {reportUrl && (
+                <div className="text-muted-foreground text-xs mt-1">
+                  Didn't see it?{" "}
+                  <a
+                    href={reportUrl}
+                    download={reportFilename}
+                    className="text-primary underline underline-offset-2 font-medium"
+                  >
+                    Download again
+                  </a>
+                  .
+                </div>
+              )}
             </div>
           ) : (
             <form onSubmit={handleEmailSubmit} className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto sm:max-w-md shrink-0">

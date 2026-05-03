@@ -4,3 +4,6 @@ dist
 package-lock.json
 
 .vercel
+
+# local test artifacts
+scripts/.test-output-*
