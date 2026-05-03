@@ -27,7 +27,7 @@ export default function Home() {
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, source: "homepage-cost-report" }),
       });
       if (res.ok) {
         setSubmitted(true);
@@ -70,9 +70,9 @@ export default function Home() {
               </Button>
             </div>
             <p className="text-sm text-muted-foreground mb-8">
-              Want cost breakdowns first?{" "}
+              Not sure what it costs?{" "}
               <Link href="/cost-guide" className="text-primary underline underline-offset-2 font-medium">
-                Read the true cost guide →
+                Get the free 2026 ESL Volunteer Cost Report →
               </Link>
             </p>
             <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
@@ -181,14 +181,14 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="max-w-lg">
             <h2 className="text-xl font-bold text-foreground mb-1">
-              We're adding 5 new countries in 2026 — get notified.
+              Get the free 2026 ESL Volunteer Cost Report
             </h2>
             <p className="text-sm text-muted-foreground mb-5">
-              No spam. One email when new countries go live.
+              Weekly fees, application costs, and spending money for all {programs.length} programs — one page, no fluff.
             </p>
             {submitted ? (
               <div className="flex items-center gap-2 text-primary font-medium text-sm">
-                <Check className="h-4 w-4" /> You're on the list.
+                <Check className="h-4 w-4" /> You're on the list — we'll email the report when it's ready.
               </div>
             ) : (
               <>
@@ -203,7 +203,7 @@ export default function Home() {
                     className="flex-1 px-4 py-2.5 text-sm border border-border rounded-md bg-white text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary disabled:opacity-60"
                   />
                   <Button type="submit" disabled={submitting} className="rounded-md px-5 font-semibold whitespace-nowrap">
-                    {submitting ? "Subscribing…" : "Notify me"}
+                    {submitting ? "Sending…" : "Download free"}
                   </Button>
                 </form>
                 {submitError && (
@@ -211,6 +211,9 @@ export default function Home() {
                 )}
               </>
             )}
+            <p className="text-xs text-muted-foreground mt-4">
+              Also: we're adding 5 new countries in 2026. Subscribers get notified first.
+            </p>
           </div>
         </div>
       </section>
