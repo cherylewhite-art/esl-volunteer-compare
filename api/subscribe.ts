@@ -3,7 +3,7 @@ export default async function handler(req: any, res: any) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { email } = req.body ?? {};
+  const { email, source } = req.body ?? {};
   if (!email || typeof email !== "string" || !email.includes("@")) {
     return res.status(400).json({ error: "Valid email required" });
   }
@@ -17,6 +17,17 @@ export default async function handler(req: any, res: any) {
 
   const publicationId = rawId.startsWith("pub_") ? rawId : `pub_${rawId}`;
 
+  const payload: Record<string, unknown> = {
+    email,
+    send_welcome_email: true,
+    reactivate_existing: false,
+    utm_source: "eslvolunteerfinder",
+    utm_medium: "email_capture",
+  };
+  if (typeof source === "string" && source.length > 0 && source.length <= 64) {
+    payload.utm_campaign = source;
+  }
+
   try {
     const response = await fetch(
       `https://api.beehiiv.com/v2/publications/${publicationId}/subscriptions`,
@@ -26,13 +37,7 @@ export default async function handler(req: any, res: any) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${apiKey}`,
         },
-        body: JSON.stringify({
-          email,
-          send_welcome_email: true,
-          reactivate_existing: false,
-          utm_source: "eslvolunteerfinder",
-          utm_medium: "email_capture",
-        }),
+        body: JSON.stringify(payload),
       }
     );
 

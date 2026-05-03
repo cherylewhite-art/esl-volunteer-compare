@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "wouter";
 import { ArrowRight, AlertTriangle, Check, X } from "lucide-react";
 import { Layout } from "@/components/layout";
+import { CostCalculator } from "@/components/cost-calculator";
 import { programs, getFlagEmoji } from "@/data";
 
 // Cheapest program per country for worked examples
@@ -170,6 +171,8 @@ export default function CostGuide() {
       </section>
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 space-y-14">
+
+        <CostCalculator />
 
         {/* Why programs cost money */}
         <section className="space-y-4">
