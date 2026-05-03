@@ -3,8 +3,13 @@
 // Subscribes the visitor to Beehiiv (best-effort) and streams back a
 // personalized 1-page PDF reflecting the user's calculator selections.
 // Called from src/components/cost-calculator.tsx on form submit.
+//
+// Layout: two-pass render — first pass measures content height, second
+// pass writes to a custom-sized page that ends right after the footer
+// (no trailing whitespace).
 
 import PDFDocument from "pdfkit";
+import { PassThrough } from "node:stream";
 
 interface ReportRequest {
   email: string;
@@ -35,7 +40,14 @@ const SUB = "#475569";
 const MUTED = "#64748b";
 const RULE = "#cbd5e1";
 const ROW = "#f1f5f9";
-const ACCENT = "#0d9488";
+const ACCENT = "#0d9488"; // brand teal — matches calculator's all-in headline
+
+const PAGE_WIDTH = 612; // Letter width
+const SIDE_MARGIN = 54;
+const CONTENT_WIDTH = PAGE_WIDTH - SIDE_MARGIN * 2;
+const TOP_MARGIN = 54;
+const BOTTOM_PADDING = 36;
+const SITE_URL = "https://eslvolunteerfinder.com/cost-guide";
 
 function isValidPayload(body: unknown): body is ReportRequest {
   if (!body || typeof body !== "object") return false;
@@ -53,7 +65,7 @@ function isValidPayload(body: unknown): body is ReportRequest {
 async function subscribeToBeehiiv(email: string): Promise<void> {
   const rawId = process.env.BEEHIIV_PUBLICATION_ID;
   const apiKey = process.env.BEEHIIV_API_KEY;
-  if (!rawId || !apiKey) return; // best-effort; missing env shouldn't block PDF
+  if (!rawId || !apiKey) return;
   const publicationId = rawId.startsWith("pub_") ? rawId : `pub_${rawId}`;
   await fetch(`https://api.beehiiv.com/v2/publications/${publicationId}/subscriptions`, {
     method: "POST",
@@ -66,12 +78,237 @@ async function subscribeToBeehiiv(email: string): Promise<void> {
       utm_medium: "email_capture",
       utm_campaign: "cost-calculator-personalized",
     }),
-  }).catch(() => {
-    /* swallow — never block the PDF on Beehiiv issues */
-  });
+  }).catch(() => {});
 }
 
 const usd = (n: number) => `$${n.toLocaleString()}`;
+
+interface ComputedTotals {
+  programFee: number;
+  appFee: number;
+  adjSpendingLow: number;
+  adjSpendingHigh: number;
+  spendingTotalLow: number;
+  spendingTotalHigh: number;
+  inCountryLow: number;
+  inCountryHigh: number;
+  allInLow: number;
+  allInHigh: number;
+}
+
+function computeTotals(req: ReportRequest): ComputedTotals {
+  const mealAdjustment = req.selections.mealsIncluded ? 0 : NO_MEALS_FOOD_BUDGET_PER_WEEK;
+  const adjSpendingLow = req.selections.spendingLowPerWeek + mealAdjustment;
+  const adjSpendingHigh = req.selections.spendingHighPerWeek + mealAdjustment;
+  const programFee = req.program.weeklyFee * req.selections.weeks;
+  const appFee = req.program.appFee ?? 0;
+  const spendingTotalLow = adjSpendingLow * req.selections.weeks;
+  const spendingTotalHigh = adjSpendingHigh * req.selections.weeks;
+  const inCountryLow = programFee + appFee + spendingTotalLow;
+  const inCountryHigh = programFee + appFee + spendingTotalHigh;
+  return {
+    programFee,
+    appFee,
+    adjSpendingLow,
+    adjSpendingHigh,
+    spendingTotalLow,
+    spendingTotalHigh,
+    inCountryLow,
+    inCountryHigh,
+    allInLow: inCountryLow + req.flights.low,
+    allInHigh: inCountryHigh + req.flights.high,
+  };
+}
+
+function drawLogo(doc: PDFKit.PDFDocument, x: number, y: number) {
+  // Teal rounded square with "ESL" in white
+  doc.roundedRect(x, y, 30, 30, 6).fillColor(ACCENT).fill();
+  doc.font("Helvetica-Bold").fontSize(10.5).fillColor("#ffffff")
+    .text("ESL", x, y + 9, { width: 30, align: "center", lineBreak: false });
+  // Wordmark
+  doc.font("Helvetica-Bold").fontSize(13).fillColor(INK)
+    .text("ESLVolunteerFinder", x + 38, y + 8, { lineBreak: false });
+}
+
+function sectionHeader(doc: PDFKit.PDFDocument, label: string, y: number): number {
+  doc.font("Helvetica-Bold").fontSize(10.5).fillColor(ACCENT)
+    .text(label, SIDE_MARGIN, y, { width: CONTENT_WIDTH, lineBreak: false });
+  return y + 18;
+}
+
+function hr(doc: PDFKit.PDFDocument, y: number, color = RULE) {
+  doc.moveTo(SIDE_MARGIN, y)
+    .lineTo(SIDE_MARGIN + CONTENT_WIDTH, y)
+    .strokeColor(color).lineWidth(0.5).stroke();
+}
+
+// Renders the entire content into `doc`, returns the y position after
+// the last write (used to size the page on the second pass).
+function buildContent(doc: PDFKit.PDFDocument, req: ReportRequest, totals: ComputedTotals): number {
+  const monthYear = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long" });
+  const titleText = `Your ESL Cost Estimate — ${req.country.name}, ${req.selections.weeks} ${req.selections.weeks === 1 ? "week" : "weeks"}`;
+
+  // ---- Header (logo + title + subtitle)
+  drawLogo(doc, SIDE_MARGIN, TOP_MARGIN);
+
+  doc.font("Helvetica-Bold").fontSize(18).fillColor(INK)
+    .text(titleText, SIDE_MARGIN, TOP_MARGIN + 46, { width: CONTENT_WIDTH, lineGap: 1 });
+
+  let y = doc.y + 4;
+  doc.font("Helvetica").fontSize(9).fillColor(MUTED)
+    .text(`Generated by ESLVolunteerFinder.com  ·  ${monthYear}`, SIDE_MARGIN, y, { lineBreak: false });
+  y += 16;
+
+  hr(doc, y);
+  y += 16;
+
+  // ---- YOUR TRIP
+  y = sectionHeader(doc, "YOUR TRIP", y);
+
+  const summaryRows: Array<[string, string]> = [
+    ["Country", req.country.name],
+    ["Program", req.program.name],
+    ["Provider · Location", `${req.program.provider} · ${req.program.city}`],
+    ["Duration", `${req.selections.weeks} ${req.selections.weeks === 1 ? "week" : "weeks"}`],
+    ["Meals included", req.selections.mealsIncluded ? "Yes" : "No"],
+  ];
+  if (req.program.housingType) summaryRows.push(["Housing", `Yes — ${req.program.housingType}`]);
+
+  summaryRows.forEach(([label, value], i) => {
+    if (i % 2 === 1) {
+      doc.rect(SIDE_MARGIN, y - 4, CONTENT_WIDTH, 18).fillColor(ROW).fill();
+    }
+    doc.font("Helvetica").fontSize(9.5).fillColor(SUB)
+      .text(label, SIDE_MARGIN + 6, y, { width: 160, lineBreak: false });
+    doc.font("Helvetica-Bold").fontSize(9.5).fillColor(INK)
+      .text(value, SIDE_MARGIN + 166, y, { width: CONTENT_WIDTH - 172, lineBreak: false, ellipsis: true });
+    y += 18;
+  });
+
+  // ---- COST BREAKDOWN
+  y += 16;
+  y = sectionHeader(doc, "COST BREAKDOWN", y);
+
+  const breakdownRows: Array<[string, string]> = [
+    [`Program fee  (${req.selections.weeks} × ${usd(req.program.weeklyFee)})`, usd(totals.programFee)],
+    ["Application fee", totals.appFee > 0 ? usd(totals.appFee) : "—"],
+    [
+      `Spending money  (~${usd(totals.adjSpendingLow)}–${usd(totals.adjSpendingHigh)}/wk${
+        !req.selections.mealsIncluded ? `, incl. +${usd(NO_MEALS_FOOD_BUDGET_PER_WEEK)}/wk for food` : ""
+      })`,
+      `${usd(totals.spendingTotalLow)}–${usd(totals.spendingTotalHigh)}`,
+    ],
+  ];
+
+  breakdownRows.forEach(([label, value], i) => {
+    if (i % 2 === 1) {
+      doc.rect(SIDE_MARGIN, y - 4, CONTENT_WIDTH, 18).fillColor(ROW).fill();
+    }
+    doc.font("Helvetica").fontSize(9.5).fillColor(SUB)
+      .text(label, SIDE_MARGIN + 6, y, { width: 366, lineBreak: false, ellipsis: true });
+    doc.font("Helvetica-Bold").fontSize(9.5).fillColor(INK)
+      .text(value, SIDE_MARGIN + 372, y, { width: 132, align: "right", lineBreak: false });
+    y += 18;
+  });
+
+  hr(doc, y);
+  y += 6;
+  doc.font("Helvetica-Bold").fontSize(10.5).fillColor(INK)
+    .text("In-country total", SIDE_MARGIN + 6, y, { width: 366, lineBreak: false });
+  doc.font("Helvetica-Bold").fontSize(10.5).fillColor(INK)
+    .text(`${usd(totals.inCountryLow)}–${usd(totals.inCountryHigh)}`, SIDE_MARGIN + 372, y, { width: 132, align: "right", lineBreak: false });
+  y += 22;
+
+  doc.font("Helvetica").fontSize(9.5).fillColor(SUB)
+    .text("Estimated flights (round-trip)", SIDE_MARGIN + 6, y, { width: 366, lineBreak: false });
+  doc.font("Helvetica").fontSize(9.5).fillColor(SUB)
+    .text(`${usd(req.flights.low)}–${usd(req.flights.high)}`, SIDE_MARGIN + 372, y, { width: 132, align: "right", lineBreak: false });
+  y += 22;
+
+  hr(doc, y);
+  y += 14;
+
+  // ---- ALL-IN
+  y = sectionHeader(doc, "ALL-IN ESTIMATED RANGE", y);
+  doc.font("Helvetica-Bold").fontSize(28).fillColor(ACCENT)
+    .text(`${usd(totals.allInLow)}–${usd(totals.allInHigh)}`, SIDE_MARGIN, y, { lineBreak: false });
+  y += 36;
+  doc.font("Helvetica").fontSize(8.5).fillColor(MUTED)
+    .text("Excludes visa and travel insurance. Verify provider pricing before applying.", SIDE_MARGIN, y, { width: CONTENT_WIDTH });
+  y += 26;
+
+  // ---- WHAT TO BUDGET EXTRA FOR
+  y = sectionHeader(doc, "WHAT TO BUDGET EXTRA FOR", y);
+  const extras = [
+    "Travel insurance (typically $40–$80/month)",
+    "Visa fees (varies by country and passport)",
+    "Weekend trips and excursions",
+    "Souvenirs and personal items",
+  ];
+  doc.font("Helvetica").fontSize(9.5).fillColor(SUB);
+  extras.forEach((line) => {
+    doc.text(`•  ${line}`, SIDE_MARGIN + 6, y, { width: CONTENT_WIDTH - 12, lineBreak: false });
+    y += 15;
+  });
+  y += 12;
+
+  // ---- WANT TO COMPARE
+  y = sectionHeader(doc, "WANT TO COMPARE?", y);
+  doc.font("Helvetica").fontSize(9.5).fillColor(SUB)
+    .text("Visit ", SIDE_MARGIN, y, { continued: true })
+    .fillColor(ACCENT)
+    .text("eslvolunteerfinder.com/cost-guide", { link: SITE_URL, underline: true, continued: true })
+    .fillColor(SUB).text(" for the live calculator.", { underline: false })
+    .text("Adjust country, program, and duration to see how your number changes.", SIDE_MARGIN, doc.y + 2, { width: CONTENT_WIDTH });
+  y = doc.y + 18;
+
+  // ---- Footer
+  hr(doc, y);
+  y += 8;
+  doc.font("Helvetica").fontSize(8).fillColor(MUTED)
+    .text(
+      "Prices change frequently — verify with the provider before applying.  ·  ESLVolunteerFinder is independent research with no paid placements.",
+      SIDE_MARGIN, y, { width: CONTENT_WIDTH, lineGap: 1 }
+    );
+  y = doc.y + 4;
+  doc.font("Helvetica").fontSize(8).fillColor(MUTED)
+    .text("eslvolunteerfinder.com/cost-guide", SIDE_MARGIN, y, { width: CONTENT_WIDTH, align: "center", lineBreak: false, link: SITE_URL });
+  y += 12;
+
+  return y;
+}
+
+function generatePdfBuffer(req: ReportRequest, totals: ComputedTotals): Promise<Buffer> {
+  return new Promise<Buffer>((resolve, reject) => {
+    // ---- Pass 1: measure on a tall scratch page
+    const measureDoc = new PDFDocument({
+      size: [PAGE_WIDTH, 1200],
+      margins: { top: TOP_MARGIN, bottom: 0, left: SIDE_MARGIN, right: SIDE_MARGIN },
+    });
+    measureDoc.on("data", () => {});
+    measureDoc.on("error", reject);
+    const finalY = buildContent(measureDoc, req, totals);
+    measureDoc.end();
+
+    // ---- Pass 2: render at exact content height
+    const pageHeight = Math.ceil(finalY + BOTTOM_PADDING);
+    const doc = new PDFDocument({
+      size: [PAGE_WIDTH, pageHeight],
+      margins: { top: TOP_MARGIN, bottom: 0, left: SIDE_MARGIN, right: SIDE_MARGIN },
+      info: {
+        Title: `Your ESL Cost Estimate — ${req.country.name}, ${req.selections.weeks}wk`,
+        Author: "ESLVolunteerFinder",
+        Subject: `Personalized cost estimate for ${req.selections.weeks} weeks in ${req.country.name}`,
+      },
+    });
+    const chunks: Buffer[] = [];
+    doc.on("data", (c: Buffer) => chunks.push(c));
+    doc.on("end", () => resolve(Buffer.concat(chunks)));
+    doc.on("error", reject);
+    buildContent(doc, req, totals);
+    doc.end();
+  });
+}
 
 export default async function handler(req: any, res: any) {
   if (req.method !== "POST") {
@@ -85,157 +322,30 @@ export default async function handler(req: any, res: any) {
     return;
   }
 
-  const { email, country, program, selections, flights } = body;
+  const totals = computeTotals(body);
 
-  // Compute totals (server-side source of truth)
-  const mealAdjustment = selections.mealsIncluded ? 0 : NO_MEALS_FOOD_BUDGET_PER_WEEK;
-  const adjSpendingLow = selections.spendingLowPerWeek + mealAdjustment;
-  const adjSpendingHigh = selections.spendingHighPerWeek + mealAdjustment;
-  const programFee = program.weeklyFee * selections.weeks;
-  const appFee = program.appFee ?? 0;
-  const spendingTotalLow = adjSpendingLow * selections.weeks;
-  const spendingTotalHigh = adjSpendingHigh * selections.weeks;
-  const inCountryLow = programFee + appFee + spendingTotalLow;
-  const inCountryHigh = programFee + appFee + spendingTotalHigh;
-  const allInLow = inCountryLow + flights.low;
-  const allInHigh = inCountryHigh + flights.high;
+  try {
+    await subscribeToBeehiiv(body.email);
+    const pdf = await generatePdfBuffer(body, totals);
 
-  // Fire-and-await Beehiiv (already swallows errors); doesn't slow PDF much
-  await subscribeToBeehiiv(email);
-
-  res.setHeader("Content-Type", "application/pdf");
-  res.setHeader(
-    "Content-Disposition",
-    `attachment; filename="ESL-Cost-Report-${country.name}-${selections.weeks}wk.pdf"`
-  );
-  res.setHeader("Cache-Control", "no-store");
-
-  const doc = new PDFDocument({
-    size: "LETTER",
-    margins: { top: 54, bottom: 54, left: 54, right: 54 },
-    info: {
-      Title: `Your ESL Volunteer Cost Report — ${country.name}`,
-      Author: "ESLVolunteerFinder",
-      Subject: `Personalized cost estimate for ${selections.weeks} weeks in ${country.name}`,
-    },
-  });
-  doc.pipe(res);
-
-  // ---- Header
-  doc.font("Helvetica-Bold").fontSize(20).fillColor(INK)
-    .text("Your ESL Volunteer Cost Report", 54, 54);
-
-  const today = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
-  doc.font("Helvetica").fontSize(9).fillColor(MUTED)
-    .text(`Personalized estimate generated ${today}  ·  ESLVolunteerFinder.com`, 54, 80);
-
-  doc.moveTo(54, 102).lineTo(558, 102).strokeColor(RULE).lineWidth(0.5).stroke();
-
-  // ---- Trip summary
-  doc.font("Helvetica-Bold").fontSize(11).fillColor(INK)
-    .text("YOUR TRIP", 54, 118);
-
-  let y = 138;
-  const summaryRows: Array<[string, string]> = [
-    ["Country", `${country.name}`],
-    ["Program", `${program.name}`],
-    ["Provider · Location", `${program.provider} · ${program.city}`],
-    ["Duration", `${selections.weeks} ${selections.weeks === 1 ? "week" : "weeks"}`],
-    ["Meals included", selections.mealsIncluded ? "Yes" : "No"],
-  ];
-  if (program.housingType) summaryRows.push(["Housing", `Yes — ${program.housingType}`]);
-
-  summaryRows.forEach(([label, value], i) => {
-    if (i % 2 === 1) {
-      doc.rect(54, y - 4, 504, 18).fillColor(ROW).fill();
-    }
-    doc.font("Helvetica").fontSize(9.5).fillColor(SUB).text(label, 60, y, { width: 160 });
-    doc.font("Helvetica-Bold").fontSize(9.5).fillColor(INK).text(value, 220, y, { width: 332, lineBreak: false, ellipsis: true });
-    y += 18;
-  });
-
-  // ---- Cost breakdown
-  y += 18;
-  doc.font("Helvetica-Bold").fontSize(11).fillColor(INK).text("COST BREAKDOWN", 54, y);
-  y += 20;
-
-  const breakdownRows: Array<[string, string]> = [
-    [`Program fee  (${selections.weeks} × ${usd(program.weeklyFee)})`, usd(programFee)],
-    ["Application fee", appFee > 0 ? usd(appFee) : "—"],
-    [
-      `Spending money  (~${usd(adjSpendingLow)}–${usd(adjSpendingHigh)}/wk${
-        !selections.mealsIncluded ? `, incl. +${usd(NO_MEALS_FOOD_BUDGET_PER_WEEK)}/wk for food` : ""
-      })`,
-      `${usd(spendingTotalLow)}–${usd(spendingTotalHigh)}`,
-    ],
-  ];
-
-  breakdownRows.forEach(([label, value], i) => {
-    if (i % 2 === 1) {
-      doc.rect(54, y - 4, 504, 18).fillColor(ROW).fill();
-    }
-    doc.font("Helvetica").fontSize(9.5).fillColor(SUB).text(label, 60, y, { width: 360, lineBreak: false, ellipsis: true });
-    doc.font("Helvetica-Bold").fontSize(9.5).fillColor(INK).text(value, 420, y, { width: 132, align: "right", lineBreak: false });
-    y += 18;
-  });
-
-  // In-country total (emphasized)
-  doc.moveTo(54, y).lineTo(558, y).strokeColor(RULE).lineWidth(0.5).stroke();
-  y += 6;
-  doc.font("Helvetica-Bold").fontSize(10.5).fillColor(INK).text("In-country total", 60, y, { width: 360, lineBreak: false });
-  doc.font("Helvetica-Bold").fontSize(10.5).fillColor(INK).text(`${usd(inCountryLow)}–${usd(inCountryHigh)}`, 420, y, { width: 132, align: "right", lineBreak: false });
-  y += 22;
-
-  doc.font("Helvetica").fontSize(9.5).fillColor(SUB).text("Estimated flights (round-trip)", 60, y, { width: 360, lineBreak: false });
-  doc.font("Helvetica").fontSize(9.5).fillColor(SUB).text(`${usd(flights.low)}–${usd(flights.high)}`, 420, y, { width: 132, align: "right", lineBreak: false });
-  y += 22;
-
-  // ---- All-in headline
-  doc.moveTo(54, y).lineTo(558, y).strokeColor(RULE).lineWidth(0.5).stroke();
-  y += 14;
-  doc.font("Helvetica").fontSize(9).fillColor(MUTED).text("ALL-IN ESTIMATED RANGE", 54, y);
-  y += 14;
-  doc.font("Helvetica-Bold").fontSize(28).fillColor(ACCENT).text(`${usd(allInLow)}–${usd(allInHigh)}`, 54, y);
-  y += 38;
-  doc.font("Helvetica").fontSize(8.5).fillColor(MUTED)
-    .text("Excludes visa and travel insurance. Verify provider pricing before applying.", 54, y, { width: 504 });
-  y += 28;
-
-  // ---- What to budget extra for
-  doc.font("Helvetica-Bold").fontSize(11).fillColor(INK).text("WHAT TO BUDGET EXTRA FOR", 54, y);
-  y += 18;
-  const extras = [
-    "Travel insurance (typically $40–$80/month)",
-    "Visa fees (varies by country and passport)",
-    "Weekend trips and excursions",
-    "Souvenirs and personal items",
-  ];
-  doc.font("Helvetica").fontSize(9.5).fillColor(SUB);
-  extras.forEach((line) => {
-    doc.text(`•  ${line}`, 60, y, { width: 494, lineBreak: false });
-    y += 15;
-  });
-
-  // ---- Compare CTA
-  y += 14;
-  doc.font("Helvetica-Bold").fontSize(11).fillColor(INK).text("WANT TO COMPARE?", 54, y);
-  y += 16;
-  doc.font("Helvetica").fontSize(9.5).fillColor(SUB)
-    .text(
-      "Visit eslvolunteerfinder.com/cost-guide for the live calculator. Adjust country, program, and duration to see how your number changes.",
-      54, y, { width: 504, lineGap: 2 }
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="ESL-Cost-Report-${body.country.name}-${body.selections.weeks}wk.pdf"`
     );
+    res.setHeader("Cache-Control", "no-store");
+    res.setHeader("Content-Length", String(pdf.length));
 
-  // ---- Footer
-  const footerY = 700;
-  doc.moveTo(54, footerY - 6).lineTo(558, footerY - 6).strokeColor(RULE).lineWidth(0.5).stroke();
-  doc.font("Helvetica").fontSize(8).fillColor(MUTED)
-    .text(
-      "Prices change frequently — verify with the provider before applying.  ·  ESLVolunteerFinder is independent research with no paid placements.",
-      54, footerY + 4, { width: 504, lineBreak: true, lineGap: 1 }
-    );
-  doc.font("Helvetica").fontSize(8).fillColor(MUTED)
-    .text("eslvolunteerfinder.com/cost-guide", 54, 722, { width: 504, align: "center", lineBreak: false });
-
-  doc.end();
+    // Use end() with the buffer so platforms that buffer the response body
+    // (instead of streaming) still receive the full PDF.
+    if (typeof res.send === "function") {
+      res.send(pdf);
+    } else {
+      const stream = new PassThrough();
+      stream.pipe(res);
+      stream.end(pdf);
+    }
+  } catch (err) {
+    res.status(500).json({ error: `PDF generation failed: ${String(err)}` });
+  }
 }

@@ -21,7 +21,12 @@ const res: any = Object.assign(
     setHeader(k: string, v: string) { this._headers[k.toLowerCase()] = v; },
     getHeader(k: string) { return this._headers[k.toLowerCase()]; },
     status(code: number) { this.statusCode = code; return this; },
-    json(body: unknown) { console.log("JSON response", code => this.statusCode, body); return this; },
+    json(body: unknown) { console.log("JSON response", this.statusCode, body); return this; },
+    send(body: Buffer | string) {
+      const buf = Buffer.isBuffer(body) ? body : Buffer.from(body);
+      chunks.push(buf);
+      return this;
+    },
   }
 );
 

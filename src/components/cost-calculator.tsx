@@ -194,7 +194,8 @@ export function CostCalculator() {
             </select>
             {program && (
               <p className="text-[11px] text-muted-foreground mt-1.5">
-                {program.city} · Min {program.minDurationWeeks}wk
+                <span className="font-semibold text-foreground">{getProviderName(program.providerSlug) ?? program.providerSlug}</span>
+                {" · "}{program.city} · Min {program.minDurationWeeks}wk
                 {program.maxDurationWeeks ? `, max ${program.maxDurationWeeks}wk` : ""}
                 {appFee > 0 ? ` · App fee $${appFee}` : " · No application fee listed"}
               </p>
