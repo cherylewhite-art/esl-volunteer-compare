@@ -106,7 +106,7 @@ export function CostCalculator() {
           <Calculator className="h-5 w-5 text-primary" />
         </div>
         <div>
-          <h2 className="text-base sm:text-lg font-bold text-foreground leading-tight">Calculate your trip cost</h2>
+          <h2 className="text-base sm:text-lg font-bold text-foreground leading-tight">Calculate your trip cost to generate a cost report</h2>
           <p className="text-xs text-muted-foreground">Pick a country, program, and length — your number updates as you go.</p>
         </div>
       </div>
