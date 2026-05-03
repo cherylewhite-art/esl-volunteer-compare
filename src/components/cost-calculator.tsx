@@ -24,6 +24,18 @@ const COUNTRY_COST_DATA: Record<
 };
 
 const NO_MEALS_FOOD_BUDGET_PER_WEEK = 30;
+const COST_REPORT_PDF = "/2026-esl-cost-report.pdf";
+
+function triggerCostReportDownload() {
+  if (typeof window === "undefined") return;
+  const a = document.createElement("a");
+  a.href = COST_REPORT_PDF;
+  a.download = "2026-ESL-Volunteer-Cost-Report.pdf";
+  a.rel = "noopener";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
 
 export function CostCalculator() {
   const [country, setCountry] = useState("vietnam");
@@ -88,6 +100,7 @@ export function CostCalculator() {
       });
       if (res.ok) {
         setSubmitted(true);
+        triggerCostReportDownload();
       } else {
         const body = await res.json().catch(() => ({}));
         setSubmitError(`Error ${res.status}${body?.error ? `: ${body.error}` : ""}`);
@@ -281,8 +294,21 @@ export function CostCalculator() {
             </div>
           </div>
           {submitted ? (
-            <div className="flex items-center gap-2 text-primary font-medium text-sm shrink-0">
-              <Check className="h-4 w-4" /> You're on the list — we'll send the report when it goes live.
+            <div className="text-sm shrink-0">
+              <div className="flex items-center gap-2 text-primary font-medium">
+                <Check className="h-4 w-4" /> Thanks — your download has started.
+              </div>
+              <div className="text-muted-foreground text-xs mt-1">
+                Didn't see it?{" "}
+                <a
+                  href={COST_REPORT_PDF}
+                  download="2026-ESL-Volunteer-Cost-Report.pdf"
+                  className="text-primary underline underline-offset-2 font-medium"
+                >
+                  Download the report
+                </a>
+                .
+              </div>
             </div>
           ) : (
             <form onSubmit={handleEmailSubmit} className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto sm:max-w-md shrink-0">
