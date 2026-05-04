@@ -74,6 +74,16 @@ function hr(doc, y) {
   doc.moveTo(54, y).lineTo(558, y).strokeColor(RULE).lineWidth(0.5).stroke();
 }
 
+// Brand lockup: teal rounded square with "ESL" in white + "VolunteerFinder"
+// wordmark. Matches the personalized PDF and the website header.
+function drawLogo(doc, x, y) {
+  doc.roundedRect(x, y, 30, 30, 6).fillColor(ACCENT).fill();
+  doc.font("Helvetica-Bold").fontSize(10.5).fillColor("#ffffff")
+    .text("ESL", x, y + 9, { width: 30, align: "center", lineBreak: false });
+  doc.font("Helvetica-Bold").fontSize(13).fillColor(INK)
+    .text("VolunteerFinder", x + 38, y + 8, { lineBreak: false });
+}
+
 function tableRow(doc, y, cols, widths, opts = {}) {
   const { bold = false, fill = null, color = INK, fontSize = 9 } = opts;
   const rowH = 18;
@@ -110,29 +120,31 @@ doc.pipe(createWriteStream(OUT_FILE));
 
 // ---- PAGE 1: HEADER + ALL PROGRAMS --------------------------------
 
+drawLogo(doc, 54, 54);
+
 doc.font("Helvetica-Bold").fontSize(20).fillColor(INK)
-  .text("2026 ESL Volunteer Cost Report", 54, 54);
+  .text("2026 ESL Volunteer Cost Report", 54, 96);
 
 doc.font("Helvetica").fontSize(9).fillColor(MUTED)
-  .text("Independent research from ESLVolunteerFinder.com  ·  No paid placements  ·  Updated May 2026", 54, 80);
+  .text("Independent research from ESLVolunteerFinder.com  ·  No paid placements  ·  Updated May 2026", 54, 122);
 
-hr(doc, 102);
+hr(doc, 144);
 
 doc.font("Helvetica").fontSize(10).fillColor(SUB)
   .text(
     "A no-fluff snapshot of what it costs to volunteer-teach English abroad. " +
       "Weekly fees, application costs, housing, meals, and 4-week budget estimates " +
       "for 11 programs across 5 countries.",
-    54, 114, { width: 504, lineGap: 2 }
+    54, 156, { width: 504, lineGap: 2 }
   );
 
-doc.font("Helvetica-Bold").fontSize(12).fillColor(INK)
-  .text("All 11 programs at a glance", 54, 168);
+doc.font("Helvetica-Bold").fontSize(12).fillColor(ACCENT)
+  .text("ALL 11 PROGRAMS AT A GLANCE", 54, 210);
 
 doc.font("Helvetica").fontSize(8.5).fillColor(MUTED)
-  .text("Weekly fees and application costs as listed on provider sites. Housing is included in every program below. Meals vary. All 11 listings verified against provider sites in April 2026.", 54, 188, { width: 504 });
+  .text("Weekly fees and application costs as listed on provider sites. Housing is included in every program below. Meals vary. All 11 listings verified against provider sites in April 2026.", 54, 230, { width: 504 });
 
-const tableTop = 218;
+const tableTop = 264;
 const headerWidths = [70, 110, 184, 50, 50, 40];
 let y = tableTop;
 y = tableRow(doc, y,
@@ -151,9 +163,15 @@ PROGRAMS.forEach((p, i) => {
 });
 hr(doc, y - 4);
 
+// Em-dash legend (clarifies the dashes used in App fee / Meals columns)
+y += 6;
+doc.font("Helvetica-Oblique").fontSize(8).fillColor(MUTED)
+  .text('"—" = not included or not separately disclosed by the provider.', 54, y, { width: 504 });
+y += 14;
+
 // What's included box
-y += 16;
-doc.font("Helvetica-Bold").fontSize(11).fillColor(INK).text("What program fees usually cover", 54, y);
+y += 10;
+doc.font("Helvetica-Bold").fontSize(11).fillColor(ACCENT).text("WHAT PROGRAM FEES USUALLY COVER", 54, y);
 y += 16;
 doc.font("Helvetica").fontSize(9).fillColor(SUB);
 const includedLines = [
@@ -167,21 +185,23 @@ includedLines.forEach((line) => {
 
 // Footer page 1
 doc.font("Helvetica").fontSize(8).fillColor(MUTED)
-  .text("eslvolunteerfinder.com/cost-guide  ·  Page 1 of 2", 54, 722, { width: 504, align: "center", lineBreak: false });
+  .text("eslvolunteerfinder.com  ·  Page 1 of 2", 54, 722, { width: 504, align: "center", lineBreak: false });
 
 // ---- PAGE 2: BUDGETS ----------------------------------------------
 
 doc.addPage();
 
+drawLogo(doc, 54, 54);
+
 doc.font("Helvetica-Bold").fontSize(14).fillColor(INK)
-  .text("Real-world 4-week budgets", 54, 54);
+  .text("Real-world 4-week budgets", 54, 96);
 
 doc.font("Helvetica").fontSize(9).fillColor(MUTED)
-  .text("Worked examples using the cheapest program in each country. Includes program fee, application fee, and food/spending. Flights are shown separately.", 54, 76, { width: 504, lineGap: 2 });
+  .text("Worked examples using the cheapest program in each country. Includes program fee, application fee, and food/spending. Flights are shown separately.", 54, 118, { width: 504, lineGap: 2 });
 
 // Spending by country table
-y = 116;
-doc.font("Helvetica-Bold").fontSize(11).fillColor(INK).text("Personal spending money by country", 54, y);
+y = 158;
+doc.font("Helvetica-Bold").fontSize(11).fillColor(ACCENT).text("PERSONAL SPENDING MONEY BY COUNTRY", 54, y);
 y += 22;
 
 const spendWidths = [80, 100, 324];
@@ -203,7 +223,7 @@ hr(doc, y - 4);
 
 // Worked examples table
 y += 18;
-doc.font("Helvetica-Bold").fontSize(11).fillColor(INK).text("4-week cost — cheapest program in each country", 54, y);
+doc.font("Helvetica-Bold").fontSize(11).fillColor(ACCENT).text("4-WEEK COST — CHEAPEST PROGRAM IN EACH COUNTRY", 54, y);
 y += 22;
 
 const workedWidths = [180, 60, 50, 60, 70, 84];
@@ -235,7 +255,7 @@ hr(doc, y - 4);
 
 // Budget buckets
 y += 18;
-doc.font("Helvetica-Bold").fontSize(11).fillColor(INK).text("Budget summary by destination", 54, y);
+doc.font("Helvetica-Bold").fontSize(11).fillColor(ACCENT).text("BUDGET SUMMARY BY DESTINATION", 54, y);
 y += 22;
 
 const bucketY = y;

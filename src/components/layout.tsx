@@ -136,7 +136,7 @@ export function Layout({
                 <div className="w-7 h-7 rounded bg-primary flex items-center justify-center">
                   <span className="text-white font-bold text-[10px] tracking-tight leading-none">ESL</span>
                 </div>
-                <span className="font-bold text-white">ESLVolunteerFinder</span>
+                <span className="font-bold text-white">VolunteerFinder</span>
               </div>
               <p className="text-white/60 text-sm leading-relaxed max-w-xs">
                 Independent comparison of ESL volunteer programs worldwide. Data gathered from public provider information. Prices may change — always verify on the official provider site.
