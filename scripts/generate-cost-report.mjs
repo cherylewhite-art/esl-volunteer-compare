@@ -130,12 +130,12 @@ doc.font("Helvetica").fontSize(9).fillColor(MUTED)
 
 hr(doc, 144);
 
-doc.font("Helvetica").fontSize(10).fillColor(SUB)
+doc.font("Helvetica-Bold").fontSize(10.5).fillColor(INK)
+  .text("Thanks for subscribing.", 54, 156, { continued: true })
+  .font("Helvetica").fillColor(SUB)
   .text(
-    "A no-fluff snapshot of what it costs to volunteer-teach English abroad. " +
-      "Weekly fees, application costs, housing, meals, and 4-week budget estimates " +
-      "for 11 programs across 5 countries.",
-    54, 156, { width: 504, lineGap: 2 }
+    " Here's the full breakdown of what it costs to volunteer-teach English abroad in 2026 — weekly fees, application costs, housing, meals, and 4-week budget estimates for 11 programs across 5 countries.",
+    { width: 504, lineGap: 2 }
   );
 
 doc.font("Helvetica-Bold").fontSize(12).fillColor(ACCENT)
