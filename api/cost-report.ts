@@ -62,23 +62,57 @@ function isValidPayload(body: unknown): body is ReportRequest {
   return true;
 }
 
-async function subscribeToBeehiiv(email: string): Promise<void> {
+// Subscribes the visitor to Beehiiv and tags the subscriber with the
+// country they requested an estimate for. Tag adds are additive (Beehiiv
+// merges with any existing tags), so a visitor who runs estimates for
+// Peru, then Vietnam, then Thailand ends up with all three tags.
+// All steps are best-effort — failures here never block the PDF.
+async function subscribeAndTagBeehiiv(email: string, country: string): Promise<void> {
   const rawId = process.env.BEEHIIV_PUBLICATION_ID;
   const apiKey = process.env.BEEHIIV_API_KEY;
   if (!rawId || !apiKey) return;
   const publicationId = rawId.startsWith("pub_") ? rawId : `pub_${rawId}`;
-  await fetch(`https://api.beehiiv.com/v2/publications/${publicationId}/subscriptions`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
-    body: JSON.stringify({
-      email,
-      send_welcome_email: true,
-      reactivate_existing: false,
-      utm_source: "eslvolunteerfinder",
-      utm_medium: "email_capture",
-      utm_campaign: "cost-calculator-personalized",
-    }),
-  }).catch(() => {});
+  const headers = { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` };
+
+  let subscriptionId: string | null = null;
+  try {
+    const subResp = await fetch(
+      `https://api.beehiiv.com/v2/publications/${publicationId}/subscriptions`,
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          email,
+          send_welcome_email: true,
+          reactivate_existing: false,
+          utm_source: "eslvolunteerfinder",
+          utm_medium: "email_capture",
+          utm_campaign: "cost-calculator-personalized",
+        }),
+      }
+    );
+    if (subResp.ok) {
+      const data = (await subResp.json()) as { data?: { id?: string } };
+      subscriptionId = data?.data?.id ?? null;
+    }
+  } catch {
+    // best-effort
+  }
+
+  if (!subscriptionId) return;
+
+  try {
+    await fetch(
+      `https://api.beehiiv.com/v2/publications/${publicationId}/subscriptions/${subscriptionId}/tags`,
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ tags: [country] }),
+      }
+    );
+  } catch {
+    // best-effort
+  }
 }
 
 const usd = (n: number) => `$${n.toLocaleString()}`;
@@ -325,7 +359,7 @@ export default async function handler(req: any, res: any) {
   const totals = computeTotals(body);
 
   try {
-    await subscribeToBeehiiv(body.email);
+    await subscribeAndTagBeehiiv(body.email, body.country.name);
     const pdf = await generatePdfBuffer(body, totals);
 
     res.setHeader("Content-Type", "application/pdf");
