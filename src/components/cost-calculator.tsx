@@ -82,6 +82,7 @@ export function CostCalculator() {
   const allInLow = inCountryLow + countryData.flightLow;
   const allInHigh = inCountryHigh + countryData.flightHigh;
 
+  const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -100,6 +101,7 @@ export function CostCalculator() {
     const countryName = COUNTRY_OPTIONS.find((c) => c.slug === country)?.name ?? country;
     const payload = {
       email,
+      firstName: firstName.trim() || undefined,
       country: { slug: country, name: countryName, flag: getFlagEmoji(country) },
       program: {
         slug: program.slug,
@@ -346,7 +348,18 @@ export function CostCalculator() {
               )}
             </div>
           ) : (
-            <form onSubmit={handleEmailSubmit} className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto sm:max-w-md shrink-0">
+            <form onSubmit={handleEmailSubmit} className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto sm:max-w-lg shrink-0">
+              <input
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder="First name"
+                maxLength={40}
+                disabled={submitting}
+                aria-label="First name (optional)"
+                autoComplete="given-name"
+                className="sm:w-32 px-3 py-2 text-sm border border-border rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary disabled:opacity-60"
+              />
               <input
                 type="email"
                 required
@@ -355,6 +368,7 @@ export function CostCalculator() {
                 placeholder="your@email.com"
                 disabled={submitting}
                 aria-label="Email address"
+                autoComplete="email"
                 className="flex-1 px-3 py-2 text-sm border border-border rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary disabled:opacity-60"
               />
               <Button type="submit" disabled={submitting} className="rounded-md whitespace-nowrap">

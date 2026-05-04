@@ -45,6 +45,28 @@ export function CountryPage({ country, programs }: CountryPageProps) {
     })),
   };
 
+  const itemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `ESL volunteer programs in ${country.name}`,
+    itemListOrder: "https://schema.org/ItemListUnordered",
+    numberOfItems: programs.length,
+    itemListElement: programs.map((program, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "Service",
+        name: program.name,
+        provider: {
+          "@type": "Organization",
+          name: getProviderBySlug(program.providerSlug)?.name ?? program.providerSlug,
+        },
+        areaServed: country.name,
+        url: `https://eslvolunteerfinder.com/program/${program.providerSlug}`,
+      },
+    })),
+  };
+
   const metaDescription =
     country.metaDescription ??
     `Compare ESL volunteer programs in ${country.name} by weekly cost, minimum duration, and included housing. Independent comparison — ${programs.length} programs listed.`;
@@ -57,6 +79,7 @@ export function CountryPage({ country, programs }: CountryPageProps) {
     >
       <Helmet>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(itemListSchema)}</script>
       </Helmet>
       {/* Breadcrumb */}
       <div className="bg-muted/30 border-b border-border">

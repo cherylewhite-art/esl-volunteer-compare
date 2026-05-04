@@ -1,16 +1,37 @@
 import React from "react";
 import { Link } from "wouter";
+import { Helmet } from "react-helmet-async";
 import { ArrowRight, ExternalLink, Check, X } from "lucide-react";
 import { Layout } from "@/components/layout";
 import { providers, programs } from "@/data";
 
 export default function Providers() {
+  const itemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "ESL volunteer program providers",
+    numberOfItems: providers.length,
+    itemListElement: providers.map((provider, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "Organization",
+        name: provider.name,
+        description: provider.summary,
+        url: `https://eslvolunteerfinder.com/program/${provider.slug}`,
+      },
+    })),
+  };
+
   return (
     <Layout
       title="ESL Volunteer Program Providers — Comparison"
       description="Compare the top ESL volunteer program providers: IVHQ, Projects Abroad, GVI, World Volunteers, and Love Volunteers."
       canonical="https://eslvolunteerfinder.com/providers"
     >
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(itemListSchema)}</script>
+      </Helmet>
       <section className="bg-white border-b border-border">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
           <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-3">ESL Volunteer Program Providers</h1>

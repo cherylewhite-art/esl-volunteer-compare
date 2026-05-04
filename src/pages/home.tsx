@@ -29,6 +29,7 @@ export default function Home() {
     FEATURED_COUNTRIES.includes(c.slug)
   );
 
+  const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
@@ -43,7 +44,11 @@ export default function Home() {
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, source: "homepage-cost-report" }),
+        body: JSON.stringify({
+          email,
+          firstName: firstName.trim() || undefined,
+          source: "homepage-cost-report",
+        }),
       });
       if (res.ok) {
         setSubmitted(true);
@@ -224,12 +229,24 @@ export default function Home() {
               <>
                 <form onSubmit={handleEmailSubmit} className="flex flex-col sm:flex-row gap-3">
                   <input
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="First name"
+                    maxLength={40}
+                    disabled={submitting}
+                    aria-label="First name (optional)"
+                    autoComplete="given-name"
+                    className="sm:w-36 px-4 py-2.5 text-sm border border-border rounded-md bg-white text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary disabled:opacity-60"
+                  />
+                  <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
                     disabled={submitting}
+                    autoComplete="email"
                     className="flex-1 px-4 py-2.5 text-sm border border-border rounded-md bg-white text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary disabled:opacity-60"
                   />
                   <Button type="submit" disabled={submitting} className="rounded-md px-5 font-semibold whitespace-nowrap">

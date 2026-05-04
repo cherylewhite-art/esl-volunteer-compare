@@ -88,10 +88,38 @@ export function ComparePage({
     })),
   };
 
+  const itemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `${nameA} vs ${nameB} — ESL volunteer providers compared`,
+    numberOfItems: 2,
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        item: {
+          "@type": "Organization",
+          name: providerA.name,
+          url: `https://eslvolunteerfinder.com/program/${providerA.slug}`,
+        },
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        item: {
+          "@type": "Organization",
+          name: providerB.name,
+          url: `https://eslvolunteerfinder.com/program/${providerB.slug}`,
+        },
+      },
+    ],
+  };
+
   return (
     <Layout title={title} description={description} canonical={canonical}>
       <Helmet>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(itemListSchema)}</script>
       </Helmet>
 
       {/* Breadcrumb */}

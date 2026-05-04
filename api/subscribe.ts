@@ -8,10 +8,15 @@ export default async function handler(req: any, res: any) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { email, source } = req.body ?? {};
+  const { email, source, firstName } = req.body ?? {};
   if (!email || typeof email !== "string" || !email.includes("@")) {
     return res.status(400).json({ error: "Valid email required" });
   }
+
+  const cleanName =
+    typeof firstName === "string"
+      ? firstName.trim().slice(0, 40).replace(/[^\p{L}\p{M}\s'.\-]/gu, "").trim() || null
+      : null;
 
   const rawId = process.env.BEEHIIV_PUBLICATION_ID;
   const apiKey = process.env.BEEHIIV_API_KEY;
@@ -38,6 +43,9 @@ export default async function handler(req: any, res: any) {
   };
   if (sourceValid) {
     payload.utm_campaign = source;
+  }
+  if (cleanName) {
+    payload.custom_fields = [{ name: "First Name", value: cleanName }];
   }
 
   try {

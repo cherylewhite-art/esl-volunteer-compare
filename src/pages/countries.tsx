@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "wouter";
+import { Helmet } from "react-helmet-async";
 import { ArrowRight, SlidersHorizontal, X } from "lucide-react";
 import { Layout } from "@/components/layout";
 import { countries, programs } from "@/data";
@@ -44,12 +45,31 @@ export default function Countries() {
 
   const hasFilters = activeFilters.size > 0;
 
+  const itemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Countries with ESL volunteer teaching programs",
+    numberOfItems: countries.length,
+    itemListElement: countries.map((country, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "Place",
+        name: country.name,
+        url: `https://eslvolunteerfinder.com/volunteer-teach-english-${country.slug}`,
+      },
+    })),
+  };
+
   return (
     <Layout
       title="Compare ESL Volunteer Programs by Country | ESLVolunteerFinder"
       description="Browse all countries with ESL volunteer teaching programs. Compare programs in Vietnam, Thailand, Nepal, Ghana, and Peru."
       canonical="https://eslvolunteerfinder.com/countries"
     >
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(itemListSchema)}</script>
+      </Helmet>
       <section className="bg-white border-b border-border">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
           <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-3">ESL Volunteer Programs by Country</h1>
