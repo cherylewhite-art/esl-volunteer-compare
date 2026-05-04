@@ -9,6 +9,7 @@
 // (no trailing whitespace).
 
 import PDFDocument from "pdfkit";
+import QRCode from "qrcode";
 import { PassThrough } from "node:stream";
 
 interface ReportRequest {
@@ -171,13 +172,14 @@ function computeTotals(req: ReportRequest): ComputedTotals {
 }
 
 function drawLogo(doc: PDFKit.PDFDocument, x: number, y: number) {
-  // Teal rounded square with "ESL" in white
+  // Teal rounded square with "ESL" in white — paired with "VolunteerFinder"
+  // wordmark so the brand reads "ESL VolunteerFinder" without doubling the
+  // "ESL" prefix.
   doc.roundedRect(x, y, 30, 30, 6).fillColor(ACCENT).fill();
   doc.font("Helvetica-Bold").fontSize(10.5).fillColor("#ffffff")
     .text("ESL", x, y + 9, { width: 30, align: "center", lineBreak: false });
-  // Wordmark
   doc.font("Helvetica-Bold").fontSize(13).fillColor(INK)
-    .text("ESLVolunteerFinder", x + 38, y + 8, { lineBreak: false });
+    .text("VolunteerFinder", x + 38, y + 8, { lineBreak: false });
 }
 
 function sectionHeader(doc: PDFKit.PDFDocument, label: string, y: number): number {
@@ -194,7 +196,12 @@ function hr(doc: PDFKit.PDFDocument, y: number, color = RULE) {
 
 // Renders the entire content into `doc`, returns the y position after
 // the last write (used to size the page on the second pass).
-function buildContent(doc: PDFKit.PDFDocument, req: ReportRequest, totals: ComputedTotals): number {
+function buildContent(
+  doc: PDFKit.PDFDocument,
+  req: ReportRequest,
+  totals: ComputedTotals,
+  qrPngBuffer: Buffer | null,
+): number {
   const generatedDate = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
   const cleanName = sanitizeFirstName(req.firstName);
   const weeksLabel = `${req.selections.weeks} ${req.selections.weeks === 1 ? "week" : "weeks"}`;
@@ -225,6 +232,7 @@ function buildContent(doc: PDFKit.PDFDocument, req: ReportRequest, totals: Compu
     ["Provider · Location", `${req.program.provider} · ${req.program.city}`],
     ["Duration", `${req.selections.weeks} ${req.selections.weeks === 1 ? "week" : "weeks"}`],
     ["Meals included", req.selections.mealsIncluded ? "Yes" : "No"],
+    ["Spending choice", `${usd(req.selections.spendingLowPerWeek)}–${usd(req.selections.spendingHighPerWeek)}/week`],
   ];
   if (req.program.housingType) summaryRows.push(["Housing", `Yes — ${req.program.housingType}`]);
 
@@ -295,8 +303,8 @@ function buildContent(doc: PDFKit.PDFDocument, req: ReportRequest, totals: Compu
   y = sectionHeader(doc, "WHAT TO BUDGET EXTRA FOR", y);
   const extras = [
     "Travel insurance (typically $40–$80/month)",
-    "Visa fees (varies by country and passport)",
-    "Weekend trips and excursions",
+    "Visa fees (typically $25–$160 depending on country and visa type)",
+    "Weekend trips and excursions ($30–$150 per outing)",
     "Souvenirs and personal items",
   ];
   doc.font("Helvetica").fontSize(9.5).fillColor(SUB);
@@ -306,15 +314,32 @@ function buildContent(doc: PDFKit.PDFDocument, req: ReportRequest, totals: Compu
   });
   y += 12;
 
-  // ---- WANT TO COMPARE
+  // ---- WANT TO COMPARE  (text + QR side-by-side so mobile users can scan)
   y = sectionHeader(doc, "WANT TO COMPARE?", y);
+  const qrSize = 64;
+  const qrPad = 16;
+  const textWidth = qrPngBuffer ? CONTENT_WIDTH - qrSize - qrPad : CONTENT_WIDTH;
+  const blockTopY = y;
+
   doc.font("Helvetica").fontSize(9.5).fillColor(SUB)
-    .text("Visit ", SIDE_MARGIN, y, { continued: true })
+    .text("Visit ", SIDE_MARGIN, y, { width: textWidth, continued: true })
     .fillColor(ACCENT)
     .text("eslvolunteerfinder.com/cost-guide", { link: SITE_URL, underline: true, continued: true })
     .fillColor(SUB).text(" for the live calculator.", { underline: false })
-    .text("Adjust country, program, and duration to see how your number changes.", SIDE_MARGIN, doc.y + 2, { width: CONTENT_WIDTH });
-  y = doc.y + 18;
+    .text("Adjust country, program, and duration to see how your number changes.", SIDE_MARGIN, doc.y + 2, { width: textWidth });
+  const textBottomY = doc.y;
+
+  if (qrPngBuffer) {
+    const qrX = SIDE_MARGIN + CONTENT_WIDTH - qrSize;
+    doc.image(qrPngBuffer, qrX, blockTopY - 4, { width: qrSize, height: qrSize });
+    doc.font("Helvetica").fontSize(7).fillColor(MUTED)
+      .text("Scan to open on mobile", qrX - 6, blockTopY + qrSize - 2, {
+        width: qrSize + 12, align: "center", lineBreak: false,
+      });
+  }
+
+  const qrBottomY = qrPngBuffer ? blockTopY - 4 + qrSize + 12 : 0;
+  y = Math.max(textBottomY, qrBottomY) + 18;
 
   // ---- Footer
   hr(doc, y);
@@ -332,7 +357,22 @@ function buildContent(doc: PDFKit.PDFDocument, req: ReportRequest, totals: Compu
   return y;
 }
 
-function generatePdfBuffer(req: ReportRequest, totals: ComputedTotals): Promise<Buffer> {
+async function generatePdfBuffer(req: ReportRequest, totals: ComputedTotals): Promise<Buffer> {
+  // Generate QR up-front (best-effort) so both measure and render passes
+  // get the same image and the page sizes match.
+  let qrPngBuffer: Buffer | null = null;
+  try {
+    qrPngBuffer = await QRCode.toBuffer(SITE_URL, {
+      type: "png",
+      errorCorrectionLevel: "M",
+      margin: 1,
+      width: 256,
+      color: { dark: INK, light: "#ffffff" },
+    });
+  } catch {
+    qrPngBuffer = null;
+  }
+
   return new Promise<Buffer>((resolve, reject) => {
     // ---- Pass 1: measure on a tall scratch page
     const measureDoc = new PDFDocument({
@@ -341,7 +381,7 @@ function generatePdfBuffer(req: ReportRequest, totals: ComputedTotals): Promise<
     });
     measureDoc.on("data", () => {});
     measureDoc.on("error", reject);
-    const finalY = buildContent(measureDoc, req, totals);
+    const finalY = buildContent(measureDoc, req, totals, qrPngBuffer);
     measureDoc.end();
 
     // ---- Pass 2: render at exact content height
@@ -359,7 +399,7 @@ function generatePdfBuffer(req: ReportRequest, totals: ComputedTotals): Promise<
     doc.on("data", (c: Buffer) => chunks.push(c));
     doc.on("end", () => resolve(Buffer.concat(chunks)));
     doc.on("error", reject);
-    buildContent(doc, req, totals);
+    buildContent(doc, req, totals, qrPngBuffer);
     doc.end();
   });
 }

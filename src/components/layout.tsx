@@ -66,12 +66,12 @@ export function Layout({
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity" aria-label="ESLVolunteerFinder home">
               <div className="w-8 h-8 rounded-md bg-primary flex items-center justify-center">
                 <span className="text-white font-bold text-[11px] tracking-tight leading-none">ESL</span>
               </div>
               <span className="font-bold text-lg text-foreground tracking-tight">
-                ESL<span className="text-primary">VolunteerFinder</span>
+                <span className="text-primary">VolunteerFinder</span>
               </span>
             </Link>
 
