@@ -11,17 +11,24 @@
 // REMOVE this file after diagnosis is complete.
 
 export default async function handler(req: any, res: any) {
+  const rawId = process.env.BEEHIIV_PUBLICATION_ID;
+  const apiKey = process.env.BEEHIIV_API_KEY;
+
+  // ---- GET: list publications + recent subscribers from the publication
+  // our env vars point at. Lets us prove which publication our API key is
+  // actually attached to.
+  if (req.method === "GET") {
+    return handleList(rawId, apiKey, res);
+  }
+
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed. POST {\"email\":\"...\"}." });
+    return res.status(405).json({ error: "Method not allowed. GET to list, POST {\"email\":\"...\"} to subscribe." });
   }
 
   const { email } = req.body ?? {};
   if (!email || typeof email !== "string" || !email.includes("@")) {
     return res.status(400).json({ error: "Valid email required in body" });
   }
-
-  const rawId = process.env.BEEHIIV_PUBLICATION_ID;
-  const apiKey = process.env.BEEHIIV_API_KEY;
 
   const idMasked = rawId
     ? `${rawId.slice(0, 6)}…${rawId.slice(-4)} (len=${rawId.length}, hasPrefix=${rawId.startsWith("pub_")})`
@@ -87,5 +94,45 @@ export default async function handler(req: any, res: any) {
       publicationId: idMasked,
       apiKey: keyMasked,
     });
+  }
+}
+
+async function handleList(rawId: string | undefined, apiKey: string | undefined, res: any) {
+  if (!rawId || !apiKey) {
+    return res.status(500).json({ error: "env vars missing", rawIdPresent: !!rawId, apiKeyPresent: !!apiKey });
+  }
+  const publicationId = rawId.startsWith("pub_") ? rawId : `pub_${rawId}`;
+
+  try {
+    // List all publications this API key can see
+    const pubsResp = await fetch("https://api.beehiiv.com/v2/publications?limit=20", {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    const pubsBody = await pubsResp.text();
+    let pubsParsed: any = null;
+    try { pubsParsed = JSON.parse(pubsBody); } catch { pubsParsed = pubsBody; }
+
+    // Recent subscriptions in the publication our env is targeting
+    const subsResp = await fetch(
+      `https://api.beehiiv.com/v2/publications/${publicationId}/subscriptions?limit=20&order_by=created&direction=desc`,
+      { headers: { Authorization: `Bearer ${apiKey}` } }
+    );
+    const subsBody = await subsResp.text();
+    let subsParsed: any = null;
+    try { subsParsed = JSON.parse(subsBody); } catch { subsParsed = subsBody; }
+
+    return res.status(200).json({
+      configuredPublicationId: publicationId,
+      publicationsVisibleToApiKey: {
+        status: pubsResp.status,
+        body: pubsParsed,
+      },
+      recentSubscribersInConfiguredPublication: {
+        status: subsResp.status,
+        body: subsParsed,
+      },
+    });
+  } catch (err) {
+    return res.status(500).json({ error: `List failed: ${String(err)}` });
   }
 }
