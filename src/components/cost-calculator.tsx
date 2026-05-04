@@ -190,7 +190,7 @@ export function CostCalculator() {
             >
               {programsForCountry.map((p) => (
                 <option key={p.slug} value={p.slug}>
-                  {p.name} — ${p.weeklyCostUsd}/wk
+                  {p.city} — {p.name} — ${p.weeklyCostUsd}/wk
                 </option>
               ))}
             </select>
