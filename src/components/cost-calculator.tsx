@@ -323,7 +323,7 @@ export function CostCalculator() {
           <div className="min-w-0">
             <div className="text-sm font-bold text-foreground">Get the 2026 ESL Volunteer Cost Report</div>
             <div className="text-xs text-muted-foreground mt-0.5">
-              All 11 programs, 5 countries, one page. Free PDF — emailed when ready.
+              All 11 programs, 5 countries, one page. Free PDF — instant download.
             </div>
           </div>
           {submitted ? (

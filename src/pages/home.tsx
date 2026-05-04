@@ -6,7 +6,11 @@ import { Button } from "@/components/ui/button";
 import { countries, programs, providers, formatCost, formatDuration, getProviderName, getFlagEmoji } from "@/data";
 
 const FEATURED_COUNTRIES = ["vietnam", "thailand", "nepal", "ghana", "peru"];
-const FEATURED_PROGRAMS = programs.slice(0, 3);
+// One sample program per featured country, in display order, so the homepage
+// table shows breadth (5 countries) instead of depth in one country.
+const FEATURED_PROGRAMS = FEATURED_COUNTRIES
+  .map((slug) => programs.find((p) => p.countrySlug === slug))
+  .filter((p): p is (typeof programs)[number] => p !== undefined);
 const COST_REPORT_PDF = "/2026-esl-cost-report.pdf";
 
 function triggerCostReportDownload() {
