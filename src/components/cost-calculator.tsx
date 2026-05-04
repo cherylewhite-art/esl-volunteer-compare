@@ -112,6 +112,7 @@ export function CostCalculator() {
         appFee: program.applicationFeeUsd,
         mealsIncludedDefault: program.mealsIncluded,
         housingType: program.housingType,
+        lastVerified: program.lastVerified,
       },
       selections: {
         weeks,

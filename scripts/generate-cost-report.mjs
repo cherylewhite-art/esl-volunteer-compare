@@ -39,7 +39,7 @@ const SPENDING_BY_COUNTRY = [
   { country: "Thailand", range: "$60–$90/wk", note: "Meals usually included. Main spend: weekend travel, SIM card, entry fees." },
   { country: "Nepal", range: "$50–$80/wk", note: "Meals usually included. Cheapest country in the dataset." },
   { country: "Ghana", range: "$60–$90/wk", note: "Meals not always included. Local food is affordable ($2–4/meal)." },
-  { country: "Peru", range: "$80–$120/wk", note: "Cusco is a tourist hub — restaurant prices higher than SE Asia." },
+  { country: "Peru", range: "$80–$120/wk", note: "Cusco is a tourist hub — restaurant prices higher than Southeast Asia." },
 ];
 
 const WORKED_EXAMPLES = [
@@ -130,7 +130,7 @@ doc.font("Helvetica-Bold").fontSize(12).fillColor(INK)
   .text("All 11 programs at a glance", 54, 168);
 
 doc.font("Helvetica").fontSize(8.5).fillColor(MUTED)
-  .text("Weekly fees and application costs as listed on provider sites. Housing is included in every program below. Meals vary.", 54, 188, { width: 504 });
+  .text("Weekly fees and application costs as listed on provider sites. Housing is included in every program below. Meals vary. All 11 listings verified against provider sites in April 2026.", 54, 188, { width: 504 });
 
 const tableTop = 218;
 const headerWidths = [70, 110, 184, 50, 50, 40];
@@ -254,16 +254,29 @@ y = bucketY + 100;
 doc.font("Helvetica").fontSize(8).fillColor(MUTED)
   .text("All figures exclude flights, visa, and travel insurance. Add $600–$1,500 for round-trip flights depending on departure city.", 54, y, { width: 504 });
 
-// Disclaimer + CTA footer
-const footerY = 700;
-hr(doc, footerY - 14);
+// Disclaimer
+const disclaimerY = 678;
+hr(doc, disclaimerY - 10);
 doc.font("Helvetica-Bold").fontSize(9).fillColor(INK)
-  .text("Prices change frequently.", 54, footerY - 4, { continued: true })
+  .text("Prices change frequently.", 54, disclaimerY, { continued: true })
   .font("Helvetica").fillColor(SUB)
-  .text(" Verify directly with providers before applying. Try the live calculator at eslvolunteerfinder.com/cost-guide.");
+  .text(" Verify directly with providers before applying.");
+
+// Next steps — final block, both URLs clickable
+const ctaY = disclaimerY + 22;
+doc.font("Helvetica-Bold").fontSize(10).fillColor(ACCENT)
+  .text("NEXT STEPS", 54, ctaY, { width: 504, lineBreak: false });
+doc.font("Helvetica").fontSize(9.5).fillColor(SUB)
+  .text("Pick your country at ", 54, ctaY + 16, { continued: true })
+  .fillColor(ACCENT)
+  .text("eslvolunteerfinder.com/countries", { link: "https://eslvolunteerfinder.com/countries", underline: true });
+doc.font("Helvetica").fontSize(9.5).fillColor(SUB)
+  .text("Or run your own numbers at ", 54, ctaY + 32, { continued: true })
+  .fillColor(ACCENT)
+  .text("eslvolunteerfinder.com/cost-guide", { link: "https://eslvolunteerfinder.com/cost-guide", underline: true });
 
 doc.font("Helvetica").fontSize(8).fillColor(MUTED)
-  .text("eslvolunteerfinder.com  ·  Page 2 of 2", 54, 722, { width: 504, align: "center", lineBreak: false });
+  .text("eslvolunteerfinder.com  ·  Page 2 of 2", 54, 740, { width: 504, align: "center", lineBreak: false });
 
 doc.end();
 

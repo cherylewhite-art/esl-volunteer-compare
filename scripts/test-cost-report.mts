@@ -42,6 +42,7 @@ const body = {
     appFee: 249,
     mealsIncludedDefault: false,
     housingType: "Shared dorm",
+    lastVerified: "April 2026",
   },
   selections: { weeks: 2, mealsIncluded: true, spendingLowPerWeek: 60, spendingHighPerWeek: 90 },
   flights: { low: 900, high: 1500 },

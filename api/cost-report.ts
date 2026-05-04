@@ -25,6 +25,7 @@ interface ReportRequest {
     appFee: number | null;
     mealsIncludedDefault: boolean;
     housingType: string | null;
+    lastVerified?: string;
   };
   selections: {
     weeks: number;
@@ -50,6 +51,7 @@ const CONTENT_WIDTH = PAGE_WIDTH - SIDE_MARGIN * 2;
 const TOP_MARGIN = 54;
 const BOTTOM_PADDING = 36;
 const SITE_URL = "https://eslvolunteerfinder.com/cost-guide";
+const SITE_COUNTRIES_URL = "https://eslvolunteerfinder.com/countries";
 
 function isValidPayload(body: unknown): body is ReportRequest {
   if (!body || typeof body !== "object") return false;
@@ -235,6 +237,7 @@ function buildContent(
     ["Spending choice", `${usd(req.selections.spendingLowPerWeek)}–${usd(req.selections.spendingHighPerWeek)}/week`],
   ];
   if (req.program.housingType) summaryRows.push(["Housing", `Yes — ${req.program.housingType}`]);
+  if (req.program.lastVerified) summaryRows.push(["Pricing verified", req.program.lastVerified]);
 
   summaryRows.forEach(([label, value], i) => {
     if (i % 2 === 1) {
@@ -314,19 +317,32 @@ function buildContent(
   });
   y += 12;
 
-  // ---- WANT TO COMPARE  (text + QR side-by-side so mobile users can scan)
-  y = sectionHeader(doc, "WANT TO COMPARE?", y);
+  // ---- Disclaimer (compact, kept for credibility — placed above the CTA
+  // so the CTA is the final block readers see)
+  hr(doc, y);
+  y += 8;
+  doc.font("Helvetica").fontSize(8).fillColor(MUTED)
+    .text(
+      "Prices change frequently — verify with the provider before applying.  ·  ESLVolunteerFinder is independent research with no paid placements.",
+      SIDE_MARGIN, y, { width: CONTENT_WIDTH, lineGap: 1 }
+    );
+  y = doc.y + 14;
+
+  // ---- NEXT STEPS  (two CTAs + QR; the final block in the report)
+  y = sectionHeader(doc, "NEXT STEPS", y);
   const qrSize = 64;
   const qrPad = 16;
   const textWidth = qrPngBuffer ? CONTENT_WIDTH - qrSize - qrPad : CONTENT_WIDTH;
   const blockTopY = y;
 
   doc.font("Helvetica").fontSize(9.5).fillColor(SUB)
-    .text("Visit ", SIDE_MARGIN, y, { width: textWidth, continued: true })
+    .text("Pick your country at ", SIDE_MARGIN, y, { width: textWidth, continued: true })
     .fillColor(ACCENT)
-    .text("eslvolunteerfinder.com/cost-guide", { link: SITE_URL, underline: true, continued: true })
-    .fillColor(SUB).text(" for the live calculator.", { underline: false })
-    .text("Adjust country, program, and duration to see how your number changes.", SIDE_MARGIN, doc.y + 2, { width: textWidth });
+    .text("eslvolunteerfinder.com/countries", { link: SITE_COUNTRIES_URL, underline: true });
+  doc.fillColor(SUB).font("Helvetica").fontSize(9.5)
+    .text("Or run your own numbers at ", SIDE_MARGIN, doc.y + 2, { width: textWidth, continued: true })
+    .fillColor(ACCENT)
+    .text("eslvolunteerfinder.com/cost-guide", { link: SITE_URL, underline: true });
   const textBottomY = doc.y;
 
   if (qrPngBuffer) {
@@ -339,20 +355,7 @@ function buildContent(
   }
 
   const qrBottomY = qrPngBuffer ? blockTopY - 4 + qrSize + 12 : 0;
-  y = Math.max(textBottomY, qrBottomY) + 18;
-
-  // ---- Footer
-  hr(doc, y);
-  y += 8;
-  doc.font("Helvetica").fontSize(8).fillColor(MUTED)
-    .text(
-      "Prices change frequently — verify with the provider before applying.  ·  ESLVolunteerFinder is independent research with no paid placements.",
-      SIDE_MARGIN, y, { width: CONTENT_WIDTH, lineGap: 1 }
-    );
-  y = doc.y + 4;
-  doc.font("Helvetica").fontSize(8).fillColor(MUTED)
-    .text("eslvolunteerfinder.com/cost-guide", SIDE_MARGIN, y, { width: CONTENT_WIDTH, align: "center", lineBreak: false, link: SITE_URL });
-  y += 12;
+  y = Math.max(textBottomY, qrBottomY) + 12;
 
   return y;
 }
