@@ -1,8 +1,6 @@
 {
-  "buildCommand": "npm run build:ssg",
+  "buildCommand": "mkdir -p dist/public",
   "outputDirectory": "dist/public",
-  "cleanUrls": true,
-  "trailingSlash": false,
   "rewrites": [
     { "source": "/", "destination": "/api/maintenance" },
     { "source": "/:path*", "destination": "/api/maintenance" }
