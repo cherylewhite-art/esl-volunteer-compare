@@ -21,9 +21,9 @@ const OUT_FILE = resolve(OUT_DIR, "2026-esl-cost-report.pdf");
 // -- DATA -----------------------------------------------------------
 
 const PROGRAMS = [
-  { country: "Vietnam", provider: "IVHQ", program: "ESL Vietnam — Ho Chi Minh City", weekly: 190, appFee: 249, meals: false },
+  { country: "Vietnam", provider: "IVHQ", program: "ESL Vietnam — Ho Chi Minh City", weekly: 190, appFee: 249, meals: true },
   { country: "Vietnam", provider: "GVI", program: "Community Teaching — Hoi An", weekly: 320, appFee: null, meals: true },
-  { country: "Vietnam", provider: "Love Volunteers", program: "Teach English in Vietnam", weekly: 175, appFee: 279, meals: false },
+  { country: "Vietnam", provider: "Love Volunteers", program: "Teach English in Vietnam", weekly: 175, appFee: 279, meals: true },
   { country: "Thailand", provider: "IVHQ", program: "ESL Thailand — Chiang Mai", weekly: 180, appFee: 249, meals: true },
   { country: "Thailand", provider: "IVHQ", program: "ESL Thailand — Hua Hin", weekly: 263, appFee: 249, meals: true },
   { country: "Nepal", provider: "IVHQ", program: "ESL Nepal — Kathmandu", weekly: 160, appFee: 249, meals: true },
@@ -35,7 +35,7 @@ const PROGRAMS = [
 ];
 
 const SPENDING_BY_COUNTRY = [
-  { country: "Vietnam", range: "$70–$100/wk", note: "Meals usually not included. Street food is cheap ($1–3/meal)." },
+  { country: "Vietnam", range: "$60–$90/wk", note: "Meals are included in all programs. Main spend: weekend travel, SIM card, entry fees." },
   { country: "Thailand", range: "$60–$90/wk", note: "Meals usually included. Main spend: weekend travel, SIM card, entry fees." },
   { country: "Nepal", range: "$50–$80/wk", note: "Meals usually included. Cheapest country in the dataset." },
   { country: "Ghana", range: "$60–$90/wk", note: "Meals not always included. Local food is affordable ($2–4/meal)." },
@@ -46,7 +46,7 @@ const WORKED_EXAMPLES = [
   { country: "Nepal", program: "Love Volunteers Nepal", weekly: 155, appFee: 279, spendingPerWeek: 65, flightLow: 900, flightHigh: 1400 },
   { country: "Ghana", program: "World Volunteers Ghana", weekly: 145, appFee: 195, spendingPerWeek: 90, flightLow: 900, flightHigh: 1500 },
   { country: "Thailand", program: "IVHQ Thailand (Chiang Mai)", weekly: 180, appFee: 249, spendingPerWeek: 70, flightLow: 700, flightHigh: 1200 },
-  { country: "Vietnam", program: "Love Volunteers Vietnam", weekly: 175, appFee: 279, spendingPerWeek: 90, flightLow: 700, flightHigh: 1200 },
+  { country: "Vietnam", program: "Love Volunteers Vietnam", weekly: 175, appFee: 279, spendingPerWeek: 70, flightLow: 700, flightHigh: 1200 },
   { country: "Peru", program: "IVHQ Peru (Cusco)", weekly: 205, appFee: 249, spendingPerWeek: 100, flightLow: 600, flightHigh: 1100 },
 ];
 

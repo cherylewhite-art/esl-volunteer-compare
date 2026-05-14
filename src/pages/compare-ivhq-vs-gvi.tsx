@@ -19,13 +19,13 @@ export default function CompareIVHQvsGVI() {
       title="IVHQ vs GVI: ESL Volunteer Programs in Vietnam Compared | ESLVolunteerFinder"
       description="IVHQ vs GVI for ESL volunteering in Vietnam: cost breakdown, TEFL inclusion, meals, and which program suits which type of volunteer. Independent comparison."
       canonical="https://eslvolunteerfinder.com/compare/ivhq-vs-gvi"
-      intro="IVHQ and GVI both run ESL volunteer programs in Vietnam, making them directly comparable options for the same destination. GVI costs nearly twice as much per week — but includes a TEFL certificate, meals, and a more structured base camp model. This comparison breaks down whether that premium is worth it for your specific trip."
-      verdictA="You want the most affordable option for Vietnam and are comfortable with a lighter-touch placement model. At $190/week with housing included, IVHQ Vietnam is one of the better-value ESL programs in Southeast Asia. You won't get a TEFL qualification, but you'll save several hundred dollars over a 4-week stay."
-      verdictB="You want a TEFL certificate as a tangible outcome of your trip — either for your CV, for confidence in the classroom, or as a stepping stone toward paid ESL work. GVI's Vietnam program includes TEFL training, meals, and a structured base camp community, which suits volunteers who want more comprehensive preparation and a stronger support network."
+      intro="IVHQ and GVI both run ESL volunteer programs in Vietnam, making them directly comparable options for the same destination. GVI costs nearly twice as much per week — but includes a TEFL certificate and a more structured base camp model. This comparison breaks down whether that premium is worth it for your specific trip."
+      verdictA="You want the most affordable option for Vietnam and are comfortable with a lighter-touch placement model. At $190/week with housing and meals included, IVHQ Vietnam is one of the better-value ESL programs in Southeast Asia. You won't get a TEFL qualification, but you'll save several hundred dollars over a 4-week stay."
+      verdictB="You want a TEFL certificate as a tangible outcome of your trip — either for your CV, for confidence in the classroom, or as a stepping stone toward paid ESL work. GVI's Vietnam program includes TEFL training and a structured base camp community, which suits volunteers who want more comprehensive preparation and a stronger support network."
       faqs={[
         {
           question: "How much more expensive is GVI than IVHQ for Vietnam?",
-          answer: "GVI costs $320/week in Vietnam; IVHQ costs $190/week. Over a 4-week stay, that's $520 more in weekly fees. GVI includes meals and has no separate application fee (pricing is all-inclusive), while IVHQ charges a $249 application fee. Factoring these in, a 4-week placement costs approximately $1,529 total with GVI vs $1,009 with IVHQ — a difference of around $520 before flights and personal spending money.",
+          answer: "GVI costs $320/week in Vietnam; IVHQ costs $190/week. Over a 4-week stay, that's $520 more in weekly fees. GVI has no separate application fee (pricing is all-inclusive), while IVHQ charges a $249 application fee. Both programs include housing and meals. Factoring these in, a 4-week placement costs approximately $1,529 total with GVI vs $1,009 with IVHQ — a difference of around $520 before flights and personal spending money.",
         },
         {
           question: "Is the TEFL certificate from GVI internationally recognized?",
@@ -40,8 +40,8 @@ export default function CompareIVHQvsGVI() {
           answer: "Yes, noticeably so. GVI places volunteers in a base camp model with structured daily schedules, regular volunteer training sessions, and a curriculum aligned with UN Sustainable Development Goals. IVHQ placements are more flexible — you work alongside local teachers with more autonomy and less scheduled oversight. Neither approach is objectively better, but if you prefer clear structure and daily guidance, GVI suits you better. If you prefer independence and flexibility, IVHQ is the stronger fit.",
         },
         {
-          question: "Does GVI include meals in Vietnam?",
-          answer: "Yes — GVI's Vietnam program is fully all-inclusive: weekly fee covers accommodation, meals, and TEFL training with no separate application fee. IVHQ's Vietnam program includes housing only; meals are your own responsibility, which adds approximately $70–$100/week in food costs to the total budget. When comparing the two programs on a full-cost basis, GVI's effective premium over IVHQ is lower than the weekly fee difference suggests.",
+          question: "Do both programs include meals in Vietnam?",
+          answer: "Yes — both IVHQ and GVI include accommodation and meals in their Vietnam programs. GVI's pricing is all-inclusive with no separate application fee, while IVHQ charges a $249 application fee on top of the weekly cost. The main remaining differentiators are price, TEFL inclusion (GVI provides one; IVHQ does not), and program structure.",
         },
       ]}
     />

@@ -63,8 +63,8 @@ const SPENDING_MONEY = [
   {
     slug: "vietnam",
     name: "Vietnam",
-    range: "$70–$100/week",
-    notes: "Meals usually not included. Street food is cheap ($1–3/meal). Budget $10–15/day for food and local transport.",
+    range: "$60–$90/week",
+    notes: "Meals are included in all programs. Main spend: weekend travel, SIM card, local transport, entry fees.",
   },
   {
     slug: "thailand",
@@ -133,10 +133,10 @@ const WORKED_EXAMPLES = [
     program: "Love Volunteers Vietnam",
     weeklyFee: 175,
     appFee: 279,
-    mealsIncluded: false,
-    spendingPerWeek: 90,
+    mealsIncluded: true,
+    spendingPerWeek: 70,
     flightEstimate: "~$700–$1,200",
-    note: "Housing included, meals not. Budget $10–15/day for food — street food is plentiful and cheap.",
+    note: "Housing and meals included. Spend goes to weekend trips, SIM card, and incidentals.",
   },
   {
     slug: "peru",

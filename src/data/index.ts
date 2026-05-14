@@ -71,7 +71,7 @@ export const countries: Country[] = [
     intro:
       "Vietnam is one of the most popular destinations for ESL volunteers in Asia. With a fast-growing economy and strong national emphasis on English education, demand for volunteer teachers is high. Programs are available in Hanoi, Ho Chi Minh City, Da Nang, and smaller provinces. Costs are generally affordable, and housing is often included. Most programs run year-round, making it easy to join at any time.",
     costSummary:
-      "Weekly costs in Vietnam range from free to around $250/week. Most mid-range programs cost $100–$175/week and include shared housing. Application fees typically range from $195–$295. Meals are included in roughly half of programs.",
+      "Weekly costs in Vietnam range from free to around $250/week. Most mid-range programs cost $100–$175/week and include shared housing. Application fees typically range from $195–$295. Meals are included in all three programs listed.",
     programTypes: [
       "Primary school English teaching",
       "Secondary school classroom support",
@@ -98,7 +98,7 @@ export const countries: Country[] = [
       {
         question: "Is housing included in the program?",
         answer:
-          "Yes — housing is included in all three Vietnam programs listed on this site. Accommodation is typically shared volunteer housing or a dorm-style facility within commuting distance of your placement school. Note that meals are not included in most Vietnam programs — budget $10–15 per day for food, which is easy to manage on local street food.",
+          "Yes — housing is included in all three Vietnam programs listed on this site. Accommodation is typically shared volunteer housing or a dorm-style facility within commuting distance of your placement school. Meals are also included in all three programs.",
       },
     ],
   },
@@ -407,7 +407,7 @@ export const programs: Program[] = [
     applicationFeeNote: null,
     housingIncluded: true,
     housingType: "Shared dorm",
-    mealsIncluded: false,
+    mealsIncluded: true,
     ageMin: 18,
     ageMax: null,
     requiresDegree: false,
@@ -417,10 +417,10 @@ export const programs: Program[] = [
     classroomHoursPerWeek: 20,
     programStartDates: "Year-round (weekly start dates)",
     summary:
-      "Volunteer with IVHQ in Ho Chi Minh City and support English-language education in local schools and community centers. This program places volunteers in structured classroom settings with local teacher supervisors. No teaching experience is required. Housing is provided in shared volunteer accommodation close to your placement site.",
+      "Volunteer with IVHQ in Ho Chi Minh City and support English-language education in local schools and community centers. This program places volunteers in structured classroom settings with local teacher supervisors. No teaching experience is required. Housing and meals are provided in shared volunteer accommodation close to your placement site.",
     highlights: [
       "Placement in public schools and community centers",
-      "Shared volunteer housing included",
+      "Shared housing and meals included",
       "Weekly start dates for maximum flexibility",
       "In-country coordinator support",
       "Orientation on arrival",
@@ -481,7 +481,7 @@ export const programs: Program[] = [
     applicationFeeNote: null,
     housingIncluded: true,
     housingType: "Shared dorm",
-    mealsIncluded: false,
+    mealsIncluded: true,
     ageMin: 18,
     ageMax: null,
     requiresDegree: false,
@@ -491,12 +491,12 @@ export const programs: Program[] = [
     classroomHoursPerWeek: 18,
     programStartDates: "Year-round (flexible start dates)",
     summary:
-      "Love Volunteers places ESL volunteers in public schools and community English programs in Ho Chi Minh City. As a nonprofit, Love Volunteers keeps fees low while maintaining vetted, supported placements. Housing in shared volunteer accommodation is included.",
+      "Love Volunteers places ESL volunteers in public schools and community English programs in Ho Chi Minh City. As a nonprofit, Love Volunteers keeps fees low while maintaining vetted, supported placements. Housing and meals in shared volunteer accommodation are included.",
     highlights: [
       "Nonprofit with low program fees",
       "Flexible year-round start dates",
       "Placement in Ho Chi Minh City's local schools",
-      "Shared volunteer housing included",
+      "Shared housing and meals included",
       "18+ with no degree required",
     ],
     websiteUrl: "https://www.lovevolunteers.org/destinations/volunteer-vietnam/teaching-english-ho-chi-minh-city",
