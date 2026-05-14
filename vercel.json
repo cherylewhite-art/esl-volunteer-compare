@@ -1,5 +1,5 @@
 {
-  "buildCommand": "mkdir -p dist/public",
+  "buildCommand": "mkdir -p dist/public && touch dist/public/.maintenance",
   "outputDirectory": "dist/public",
   "rewrites": [
     { "source": "/", "destination": "/api/maintenance" },
