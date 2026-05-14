@@ -100,7 +100,7 @@ export default function Home() {
             <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
               <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-primary" />We researched {programs.length} programs so you don't have to</span>
               <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-primary" />{countries.length} countries covered</span>
-              <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-primary" />Transparent: referral fees disclosed, never hidden</span>
+              <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-primary" />Independent: no paid placements, no referral fees</span>
             </div>
           </div>
         </div>
@@ -143,7 +143,7 @@ export default function Home() {
               {
                 icon: Shield,
                 title: "No conflicts of interest",
-                desc: "Programs are listed because they're real, researched options — not because they paid us. We may earn a referral fee if you apply through a link on this site. We disclose this because transparency builds more trust than hiding it.",
+                desc: "Programs are listed because they're real, researched options — not because they paid us.",
               },
             ].map((item, i) => (
               <div key={i} className="flex gap-4">

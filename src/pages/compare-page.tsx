@@ -294,9 +294,6 @@ export function ComparePage({
               </a>
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground">
-            If you apply through a link on this site, we may earn a referral fee at no cost to you. This doesn't affect which providers are listed or how they're compared.
-          </p>
         </section>
 
         {/* Compare all CTA */}
